@@ -250,7 +250,6 @@ int16_t Auto_High_PID(float Target,uint8_t isRate)
 	
 		
 	pidSetTarget(&AutoHigh_THR, Target);
-	UserData[0] = Target;
 	if(HCSR04_Update)
 	{	
 		ClimbTarget = pidUpdate(&AutoHigh_THR , HCSR04_Distance ,ALT_Update_Interval);
@@ -260,7 +259,6 @@ int16_t Auto_High_PID(float Target,uint8_t isRate)
 
 	ClimbTarget = Math_fConstrain(ClimbTarget,-50.0f,+50.0f); 
 	
-	UserData[1] = ClimbTarget;
 	
 	pidSetTarget(&Climb, ClimbTarget);
 	
@@ -269,7 +267,6 @@ int16_t Auto_High_PID(float Target,uint8_t isRate)
 	Climb.PID_out = Climb_last_out + Math_fConstrain((Climb.PID_out - Climb_last_out),-5,+5);
 	Climb_last_out = Climb.PID_out; 
 	
-	UserData[2] = Climb.PID_out;
 
 	
 	return (int16_t)Climb.PID_out;

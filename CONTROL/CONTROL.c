@@ -259,7 +259,6 @@ void PWM_Write1_Motors(void)
 		motor[3] = PIDMIX(-1,+1,-1);
 
 
-		UserData[8] = THROTTLE;
 //	
 		Moto_Reflash(motor[0],motor[1],motor[2],motor[3]);
 	}

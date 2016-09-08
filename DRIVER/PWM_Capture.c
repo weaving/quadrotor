@@ -27,22 +27,21 @@ void TIM4_Init(u32 arr,u16 psc)
 
 
 	
-	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15;  //P0 清除之前设置  
+	GPIO_InitStructure.GPIO_Pin  = GPIO_Pin_12|GPIO_Pin_13|GPIO_Pin_14|GPIO_Pin_15;    
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;//复用功能
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;	//速度100MHz
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP; //推挽复用输出
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN; //下拉
 	GPIO_Init(GPIOD,&GPIO_InitStructure);              //初始化PD 
 	
-	GPIO_PinAFConfig(GPIOD,GPIO_PinSource12,GPIO_AF_TIM4); //PA0复用位定时器5
+	GPIO_PinAFConfig(GPIOD,GPIO_PinSource12,GPIO_AF_TIM4); //PD复用位定时器4
 	GPIO_PinAFConfig(GPIOD,GPIO_PinSource13,GPIO_AF_TIM4);
 	GPIO_PinAFConfig(GPIOD,GPIO_PinSource14,GPIO_AF_TIM4);
 	GPIO_PinAFConfig(GPIOD,GPIO_PinSource15,GPIO_AF_TIM4);
 	
 	
-	//GPIO_ResetBits(GPIOD,GPIO_Pin_6|GPIO_Pin_7|GPIO_Pin_8|GPIO_Pin_9);						 //P0 下拉
 	
-	//初始化定时器5 TIM4	 
+	//初始化定时器4 TIM4	 
 	TIM_TimeBaseStructure.TIM_Period = arr; //设定计数器自动重装值 
 	TIM_TimeBaseStructure.TIM_Prescaler =psc; 	//预分频器   
 	TIM_TimeBaseStructure.TIM_ClockDivision = TIM_CKD_DIV1; //设置时钟分割:TDTS = Tck_tim
@@ -57,7 +56,6 @@ void TIM4_Init(u32 arr,u16 psc)
 	TIM4_ICInitStructure.TIM_ICPrescaler = TIM_ICPSC_DIV1;	 //配置输入分频,不分频 
 	TIM4_ICInitStructure.TIM_ICFilter = 0x00;//IC1F=0000 配置输入滤波器 不滤波
 	
-//	TIM_ICInit(TIM4, &TIM4_ICInitStructure);
 	TIM4_ICInitStructure.TIM_Channel = TIM_Channel_1;
   	TIM_ICInit(TIM4, &TIM4_ICInitStructure);
 	TIM4_ICInitStructure.TIM_Channel = TIM_Channel_2;
@@ -69,7 +67,7 @@ void TIM4_Init(u32 arr,u16 psc)
 	
 	//中断分组初始化
 	NVIC_InitStructure.NVIC_IRQChannel = TIM4_IRQn;  //TIM4中断
-	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级0级
+	NVIC_InitStructure.NVIC_IRQChannelPreemptionPriority = 2;  //先占优先级2级
 	NVIC_InitStructure.NVIC_IRQChannelSubPriority = 0;  //从优先级0级
 	NVIC_InitStructure.NVIC_IRQChannelCmd = ENABLE; //IRQ通道被使能
 	NVIC_Init(&NVIC_InitStructure);  //根据NVIC_InitStruct中指定的参数初始化外设NVIC寄存器 
@@ -94,12 +92,12 @@ void TIM5_Init(u32 arr,u16 psc)
 	RCC_APB1PeriphClockCmd(RCC_APB1Periph_TIM5,ENABLE);  	//TIM5时钟使能    
 	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOA, ENABLE); 	//使能PORTA时钟	
 	
-	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3; //GPIOA0
+	GPIO_InitStructure.GPIO_Pin = GPIO_Pin_0 | GPIO_Pin_1|GPIO_Pin_2|GPIO_Pin_3; //GPIOA
 	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;//复用功能
 	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_100MHz;	//速度100MHz
 	GPIO_InitStructure.GPIO_OType = GPIO_OType_PP; //推挽复用输出
 	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_DOWN; //下拉
-	GPIO_Init(GPIOA,&GPIO_InitStructure); //初始化PA0
+	GPIO_Init(GPIOA,&GPIO_InitStructure); //初始化PA
 
 	GPIO_PinAFConfig(GPIOA,GPIO_PinSource0,GPIO_AF_TIM5); //PA0复用位定时器5
   GPIO_PinAFConfig(GPIOA,GPIO_PinSource1,GPIO_AF_TIM5);
@@ -141,16 +139,11 @@ void TIM5_Init(u32 arr,u16 psc)
 	TIM_ITConfig(TIM5,TIM_IT_CC2,ENABLE);//允许更新中断 ,允许CC1IE捕获中断	
 	TIM_ITConfig(TIM5,TIM_IT_CC3,ENABLE);//允许更新中断 ,允许CC1IE捕获中断	
 	TIM_ITConfig(TIM5,TIM_IT_CC4,ENABLE);//允许更新中断 ,允许CC1IE捕获中断	
-
-
- 
-
 	
   TIM_Cmd(TIM5,ENABLE ); 	//使能定时器5
 
 }
 //定时器4中断服务程序
-u16 Pwm_In_last[16];
 void TIM4_IRQHandler(void)
 { 
 	u16 temp;
@@ -178,7 +171,7 @@ void TIM4_IRQHandler(void)
 		{
  			Pwm_Room[8]=TIM_GetCapture1(TIM4);
 			TIM4CH1_CAPTURE_STA=1;		
-	   		TIM_OC1PolarityConfig(TIM4,TIM_ICPolarity_Falling);		//CC1P=1 设置为下降沿捕获
+	   	TIM_OC1PolarityConfig(TIM4,TIM_ICPolarity_Falling);		//CC1P=1 设置为下降沿捕获
 		}
 		
 		TIM_ClearITPendingBit(TIM4,TIM_IT_CC1);		    

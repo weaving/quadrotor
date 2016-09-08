@@ -266,10 +266,9 @@ void Flash_SaveOFFSET(void)
 	u32 save_data[50];
 	u32 read_data[36];
 	int i;
-//	save_data[0]=ACC_OFFSET.X;
-	save_data[0]=10;
+	save_data[0]=ACC_OFFSET.X;
 	save_data[1]=ACC_OFFSET.Y;
-	save_data[11]=ACC_OFFSET.Z;
+	//save_data[11]=ACC_OFFSET.Z;
 	
 	save_data[2]=GYRO_OFFSET.X;
 	save_data[3]=GYRO_OFFSET.Y;

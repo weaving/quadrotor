@@ -22,8 +22,6 @@
 /* TIM3 用来输出4路PWM */
 void TIM_PWM_Config(void);
 //TIM_Cmd(TIM3, ENABLE);
-void PWM_MOTO_Normal_Config(void);
-void Electronic_Speed_Controller_init(void);
-void Electronic_Speed_Controller_test(void);
+void PWM_MOTO_Config(void);
 void Moto_Reflash(int16_t MOTO1_PWM,int16_t MOTO2_PWM,int16_t MOTO3_PWM,int16_t MOTO4_PWM);
 #endif

@@ -20,11 +20,11 @@ void PWM_PID_Smooth(void);
 void PWM_Write_Motors(void);
 void PWM_Write1_Motors(void);
 void PWM_Damp_OUT(float Target_Height);//前进
-void PWM_Damp_OUT1(float Target_Height);//前进
 void PWM_sethigh_OUT(float Target_Height);//后退
 void zuoguai(float Target_Height);
 void youguai(float Target_Height);
 void PWM_Drop_OUT(void);//降落
+void StableMode(void);
 //void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float pit_tar, float yaw_tar);
 void Control_Init(void);
 #endif

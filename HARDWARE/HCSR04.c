@@ -182,7 +182,7 @@ void HCSR04_Get_Distance(int time)
 {
 	float Distance,Sound_Speed,x,y,z,IMU_SPEED_Z_tmp,IMU_SPEED_Z_sum;
 	static uint32_t last_time=0, now_time=0; // 采样周期计数 单位 us
-	static float speed_z[10],last_HCSR04_Distance=0;
+	static float speed_Z[10],last_HCSR04_Distance=0;
 	uint8_t i=0;
 	//计算在当前温度下 对应的空气中声音的传播速度
 	/*
@@ -212,17 +212,17 @@ void HCSR04_Get_Distance(int time)
 	
 	HCSR04_Distance = Distance_KalmanFilter(Distance,0.004,0.04,0);
 	IMU_SPEED_Z_tmp = (HCSR04_Distance-last_HCSR04_Distance)/(now_time-last_time)*1000000.0f;
-	/* cal speed_z */
-	/* sum speed_z 10 times */
-  for(i=0;i<sizeof(speed_z)/sizeof(float);i++)
-	  speed_z[i]=speed_z[i+1];
-	speed_z[i] = 	IMU_SPEED_Z_tmp;
+	/* cal speed_Z */
+	/* sum speed_Z 10 times */
+  for(i=0;i<sizeof(speed_Z)/sizeof(float);i++)
+	  speed_Z[i]=speed_Z[i+1];
+	speed_Z[i] = 	IMU_SPEED_Z_tmp;
 	
-	/* then cal the average speed_z */
+	/* then cal the average speed_Z */
 	IMU_SPEED_Z_sum=0;
-	for(i=0;i<sizeof(speed_z)/sizeof(float);i++)
-		IMU_SPEED_Z_sum += speed_z[i];
-	IMU_SPEED_Z = IMU_SPEED_Z_sum/(sizeof(speed_z)/sizeof(float));
+	for(i=0;i<sizeof(speed_Z)/sizeof(float);i++)
+		IMU_SPEED_Z_sum += speed_Z[i];
+	IMU_SPEED_Z = IMU_SPEED_Z_sum/(sizeof(speed_Z)/sizeof(float));
 	
 	/* ready for the next cal */
 	last_time = now_time;

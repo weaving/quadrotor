@@ -80,11 +80,11 @@ void Fly_Control(void)
 //	Read_AutoHighMode();
 	Read_HeadFreeMode();
 
-//	if(RCTarget.Throttle < 1020)			//保护措施，当油门低时，关闭电机，不启动控制。
-//	{
-//		Moto_Reflash(1000,1000,1000,1000);
-//		return;
-//	}
+	if(RCTarget.Throttle < 1020)			//保护措施，当油门低时，关闭电机，不启动控制。
+	{
+		Moto_Reflash(1000,1000,1000,1000);
+		return;
+	}
 
 	now_time = micros();  //读取时间
 	if(now_time > last_time)
@@ -107,7 +107,7 @@ void Fly_Control(void)
 	switch(FlyMode)	//检测飞行模式
 	{ 		
 		case 1:	//
-				PWM_Damp_OUT(70.0);//前进
+				StableMode();//前进
 				break ;
 
 		default:
@@ -144,7 +144,7 @@ void Stabilize_Mode_Conrtol(void)
 	
 	//---------------计算PWM输出------------------------------------ 
 
-void PWM_Damp_OUT(float Target_Height)	 //前进
+void StableMode(void)	 //遥控器自稳模式
 {
 //	THROTTLE=1300;
 // 	Stabilize_Mode_Conrtol();
@@ -169,7 +169,16 @@ void PWM_Damp_OUT(float Target_Height)	 //前进
 //	Roll_Pitch_Yaw_AnglePID(RCTarget.Roll,RCTarget.Pitch,0,Target_Yaw_Rate); //智能油门定高模式
 //	Roll_Pitch_Yaw_AnglePID(RCTarget.Roll,0,0,Target_Yaw_Rate);
 	Target_Yaw =  Q_ANGLE.Z;
-	Target_Yaw_Rate = -RCTarget.Yaw*100;
+	if((RCTarget.Yaw > 2 || RCTarget.Yaw < -2) )	 
+	{
+		Target_Yaw =  Q_ANGLE.Z;
+		Target_Yaw_Rate = -RCTarget.Yaw*100;
+	}
+	else
+	{
+		Target_Yaw_Rate = 0;	
+	}
+	
 	Target_Pitch = RCTarget.Pitch;
 	Target_Roll = RCTarget.Roll;
 	

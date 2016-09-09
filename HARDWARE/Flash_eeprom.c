@@ -147,7 +147,7 @@ void Flash_ReadPID(void)
 	Stabilize_Yaw.Ki=0;
 	Stabilize_Yaw.Kd=0;
 	
-	//Climb.Kp=2;
+	Climb.Kp=2;
 	Climb.Ki=0;
 	Climb.Kd=0;
 

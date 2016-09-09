@@ -253,7 +253,6 @@ int16_t Auto_High_PID(float Target,uint8_t isRate)
 	if(HCSR04_Update)
 	{	
 		ClimbTarget = pidUpdate(&AutoHigh_THR , HCSR04_Distance ,ALT_Update_Interval);
-		HCSR04_Distance_Last = HCSR04_Distance	;
 		HCSR04_Update = 0;
 	}	
 
@@ -264,11 +263,11 @@ int16_t Auto_High_PID(float Target,uint8_t isRate)
 	
 	pidUpdate(&Climb ,IMU_SPEED_Z ,ALT_Update_Interval);
 	Climb.PID_out = Math_fConstrain(Climb.PID_out,-300.0f,+300.0f);
+	
+	
 	Climb.PID_out = Climb_last_out + Math_fConstrain((Climb.PID_out - Climb_last_out),-5,+5);
 	Climb_last_out = Climb.PID_out; 
-	
-
-	
+		
 	return (int16_t)Climb.PID_out;
 }
 

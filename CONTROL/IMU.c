@@ -366,9 +366,9 @@ void AHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, floa
 	
 	Roll = atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2* q2 + 1);
 	Pitch = -asin(-2 * q1 * q3 + 2 * q0* q2);
-	Mag_Yaw = atan2(2 * q1 * q2 + 2 * q0 * q3, -2 * q2*q2 - 2 * q3* q3 + 1)* 57.29578;
 //	Q_ANGLE.Z = -Mag_Yaw; // yaw
 	Q_ANGLE.Z  = atan2(my*cos(-Roll) + mx*sin(-Roll)*sin(-Pitch) - mz*sin(-Roll)*cos(-Pitch), mx*cos(-Pitch)+mz*sin(-Pitch))*180/3.14159265;
+	Mag_Yaw = Q_ANGLE.Z;
 	Q_ANGLE.Y = Pitch * 180 / 3.1415926f - AngleOffset_Pit;
 	Q_ANGLE.X = Roll * 180 / 3.1415926f - AngleOffset_Rol;
 }

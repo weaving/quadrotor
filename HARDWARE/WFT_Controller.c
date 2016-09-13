@@ -9,13 +9,13 @@ void Pwm_In_Convert(void)
 	//Pwm_in  1000~2000
 	RCTarget.Throttle = Pwm_In[2]; 
 //	THROTTLE = RCTarget.Throttle;
-	if(Pwm_In[0]>1522 || Pwm_In[0]<1519)	RCTarget.Yaw = ((float)(Pwm_In[0])-1520)/12.5f; //-40~40業
+	if(Pwm_In[0]>1522 || Pwm_In[0]<1519)	RCTarget.Yaw = ((float)(Pwm_In[0])-1520)/25.0f; //-40~40業
 	else RCTarget.Yaw = 0;
 
-	if(Pwm_In[1]>1522 || Pwm_In[1]<1519)	RCTarget.Pitch = ((float)(Pwm_In[1])-1520)/12.5f; //-40~40業
+	if(Pwm_In[1]>1522 || Pwm_In[1]<1519)	RCTarget.Pitch = ((float)(Pwm_In[1])-1520)/25.0f; //-40~40業
 	else RCTarget.Pitch = 0;
 	
-	if(Pwm_In[3]>1522 || Pwm_In[3]<1519)	RCTarget.Roll = ((float)(Pwm_In[3])-1520)/12.5f-12; //-40~40業
+	if(Pwm_In[3]>1522 || Pwm_In[3]<1519)	RCTarget.Roll = ((float)(Pwm_In[3])-1520)/25.0-6; //-40~40業
 	else RCTarget.Roll = 0;
 	
 

@@ -176,7 +176,7 @@ int main(void)
 	HMC5883_Init();
 	NRF24L01_Init();
 	Control_Init();
-	HCSR04_Init();
+//	HCSR04_Init();
 	TIM7_Int_Init(0xFFFF,83);//1Mhz的计数频率,1us时间度量	
 	OSInit();  //UCOS初始化
 	OSTaskCreate(start_task,(void*)0,(OS_STK*)&START_TASK_STK[START_STK_SIZE-1],START_TASK_PRIO); //创建开始任务
@@ -199,7 +199,7 @@ void start_task(void *pdata)
 //	OSTaskCreate(led0_task,(void*)0,(OS_STK*)&LED0_TASK_STK[LED0_STK_SIZE-1],LED0_TASK_PRIO);//创建LED0任务
 //	OSTaskCreate(led1_task,(void*)0,(OS_STK*)&LED1_TASK_STK[LED1_STK_SIZE-1],LED1_TASK_PRIO);//创建LED1任务
 //	OSTaskCreate(float_task,(void*)0,(OS_STK*)&FLOAT_TASK_STK[FLOAT_STK_SIZE-1],FLOAT_TASK_PRIO);//创建浮点测试任务
-	OSTaskCreate(hcsr04_task,(void*)0,(OS_STK*)&HCSR04_TASK_STK[HCSR04_STK_SIZE-1],HCSR04_TASK_PRIO);//创建HCSR04任务
+//	OSTaskCreate(hcsr04_task,(void*)0,(OS_STK*)&HCSR04_TASK_STK[HCSR04_STK_SIZE-1],HCSR04_TASK_PRIO);//创建HCSR04任务
 	OSTaskCreate(wft_task,(void*)0,(OS_STK*)&WFT_TASK_STK[WFT_STK_SIZE-1],WFT_TASK_PRIO);//创建WFT07任务
 
 	OSTaskCreate(nrf_task,(void*)0,(OS_STK*)&NRF_TASK_STK[NRF_STK_SIZE-1],NRF_TASK_PRIO);//创建NRF任务
@@ -277,16 +277,14 @@ void nrf_task(void *pdata)
 	while(1)
 	{
 //	Send_Data();
-	UserData[0] = AVG_MAG.X;
-	UserData[1] = AVG_MAG.Y;
-  UserData[2] = AVG_MAG.Z;
-				UserData[8] = RCTarget.Throttle;
 
-//		Data_Send_UserData();
+	UserData[8] = RCTarget.Throttle;
+
+		Data_Send_UserData();
 
 //	Data_Send_UserData();
 //  Data_Send_Senser();
-		Data_Send_Status();
+//		Data_Send_Status();
 		delay_ms(30);
 	};
 }

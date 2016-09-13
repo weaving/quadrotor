@@ -67,7 +67,7 @@ void Read_AutoHighMode(void)
 //标志：HeadFreeMode
 void Read_HeadFreeMode(void)
 {
-	HeadFreeMode=0;
+	HeadFreeMode=1;
 		return ;
 }
 
@@ -80,11 +80,11 @@ void Fly_Control(void)
 //	Read_AutoHighMode();
 	Read_HeadFreeMode();
 
-	if(RCTarget.Throttle < 1020)			//保护措施，当油门低时，关闭电机，不启动控制。
-	{
-		Moto_Reflash(1000,1000,1000,1000);
-		return;
-	}
+//	if(RCTarget.Throttle < 1020)			//保护措施，当油门低时，关闭电机，不启动控制。
+//	{
+//		Moto_Reflash(1000,1000,1000,1000);
+//		return;
+//	}
 
 	now_time = micros();  //读取时间
 	if(now_time > last_time)
@@ -98,16 +98,11 @@ void Fly_Control(void)
 	}	
 	last_time = now_time;
 	
-//	HeadFree_Yaw_Set=53;
-//	HeadFree_Yaw_Error = Get_Yaw_Error(HeadFree_Yaw_Set,Mag_Yaw);
-//	HeadFree_Yaw_Error *= 0.0174533f; //转换成弧度
-//	Target_Roll = RCTarget.Roll * cos(HeadFree_Yaw_Error) - RCTarget.Pitch * sin(HeadFree_Yaw_Error);
-//	Target_Pitch = RCTarget.Roll * sin(HeadFree_Yaw_Error) + RCTarget.Pitch * cos(HeadFree_Yaw_Error);
 	
 	switch(FlyMode)	//检测飞行模式
 	{ 		
 		case 1:	//
-				StableMode();//前进
+				StableMode_Control();//前进
 				break ;
 
 		default:
@@ -125,6 +120,8 @@ void Stabilize_Mode_Conrtol(void)
 		HeadFree_Yaw_Error *= 0.0174533f; //转换成弧度
 		Target_Roll = RCTarget.Roll * cos(HeadFree_Yaw_Error) - RCTarget.Pitch * sin(HeadFree_Yaw_Error);
 		Target_Pitch = RCTarget.Roll * sin(HeadFree_Yaw_Error) + RCTarget.Pitch * cos(HeadFree_Yaw_Error);
+
+		
 	}
 	else
 	{
@@ -144,31 +141,31 @@ void Stabilize_Mode_Conrtol(void)
 	
 	//---------------计算PWM输出------------------------------------ 
 
-void StableMode(void)	 //遥控器自稳模式
+void StableMode_Control(void)	 //遥控器自稳模式
 {
-//	THROTTLE=1300;
-// 	Stabilize_Mode_Conrtol();
-// 	if(i==0)
-// 	{
-// 			if(HCSR04_Distance<Target_Height)
-// 			{
-// 								THROTTLE=THROTTLE+0.002*(Target_Height-HCSR04_Distance);
-// 								if(THROTTLE>1520)
-// 											THROTTLE=1520;//12.0 1560//11.9/11.8 1570
-// 			}
-// 			if(HCSR04_Distance>=Target_Height)
-// 			{
-// 				i=1;
-// 				THROTTLE_Stabilize=THROTTLE;
-// 			}
-// 	}
-	//else
-	//{
-	THROTTLE=RCTarget.Throttle+Auto_High_PID(HCSR04_Distance_Last,0);
+
+	if(HeadFreeMode == 1)  	//无头模式
+	{
+		HeadFree_Yaw_Error = Get_Yaw_Error(HeadFree_Yaw_Set,Mag_Yaw);
+		HeadFree_Yaw_Error *= 0.0174533f; //转换成弧度
+		Target_Roll = RCTarget.Roll * cos(HeadFree_Yaw_Error) - RCTarget.Pitch * sin(HeadFree_Yaw_Error);
+		Target_Pitch = RCTarget.Roll * sin(HeadFree_Yaw_Error) + RCTarget.Pitch * cos(HeadFree_Yaw_Error);
+
+	}
+	else
+	{
+		HeadFree_Yaw_Set = Mag_Yaw;     //无头模式航向标定
+		Target_Roll = RCTarget.Roll;
+		Target_Pitch = RCTarget.Pitch;		
+	}
+	
+	THROTTLE=RCTarget.Throttle;//+Auto_High_PID(HCSR04_Distance_Last,0);
 	//}
-//	Roll_Pitch_Yaw_AnglePID(RCTarget.Roll,RCTarget.Pitch,0,Target_Yaw_Rate); //智能油门定高模式
-//	Roll_Pitch_Yaw_AnglePID(RCTarget.Roll,0,0,Target_Yaw_Rate);
-	Target_Yaw =  Q_ANGLE.Z;
+//	if(THROTTLE<1200)	 //低油门不启用YAW控制，所有PID积分清零
+//	{
+//		pidReset_all();  
+//		Target_Yaw =  Q_ANGLE.Z;
+//	}
 	if((RCTarget.Yaw > 2 || RCTarget.Yaw < -2) )	 
 	{
 		Target_Yaw =  Q_ANGLE.Z;
@@ -178,15 +175,17 @@ void StableMode(void)	 //遥控器自稳模式
 	{
 		Target_Yaw_Rate = 0;	
 	}
-	
-	Target_Pitch = RCTarget.Pitch;
-	Target_Roll = RCTarget.Roll;
+
+		 
 	
 	Roll_Pitch_Yaw_AnglePID(Target_Roll,Target_Pitch,Target_Yaw,Target_Yaw_Rate); 
 
 	PID_PITCH = PitchRate.PID_out;
 	PID_ROLL = RollRate.PID_out;
 	PID_YAW = YawRate.PID_out;
+
+
+	
 	PWM_Write1_Motors(); //写输出到PWM通道
 }
 
@@ -267,6 +266,10 @@ void PWM_Write1_Motors(void)
 
 		motor[3] = PIDMIX(-1,+1,-1);
 
+//		UserData[0] = motor[0];
+//		UserData[1] = motor[1];
+//		UserData[2] = motor[2];
+//		UserData[3] = motor[3];
 
 //	
 		Moto_Reflash(motor[0],motor[1],motor[2],motor[3]);

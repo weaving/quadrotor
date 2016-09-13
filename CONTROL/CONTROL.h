@@ -24,7 +24,7 @@ void PWM_sethigh_OUT(float Target_Height);//ºóÍË
 void zuoguai(float Target_Height);
 void youguai(float Target_Height);
 void PWM_Drop_OUT(void);//½µÂä
-void StableMode(void);
+void StableMode_Control(void);
 //void CONTROL(float rol_now, float pit_now, float yaw_now, float rol_tar, float pit_tar, float yaw_tar);
 void Control_Init(void);
 #endif

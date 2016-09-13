@@ -182,7 +182,7 @@ void HCSR04_Get_Distance(int time)
 {
 	float Distance,Sound_Speed,x,y,z,IMU_SPEED_Z_tmp,IMU_SPEED_Z_sum;
 	static uint32_t last_time=0, now_time=0; // 采样周期计数 单位 us
-	static float speed_Z[10],last_HCSR04_Distance=0;
+	static float speed_Z[5],last_HCSR04_Distance=0;
 	uint8_t i=0;
 	//计算在当前温度下 对应的空气中声音的传播速度
 	/*
@@ -227,6 +227,6 @@ void HCSR04_Get_Distance(int time)
 	/* ready for the next cal */
 	last_time = now_time;
 	last_HCSR04_Distance = HCSR04_Distance;
-	UserData[3] = IMU_SPEED_Z;
+	
 	if (HCSR04_Distance>400) HCSR04_Error = 1;   //超出量程
 }

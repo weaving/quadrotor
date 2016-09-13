@@ -246,25 +246,19 @@ int16_t Auto_High_PID(float Target,uint8_t isRate)
 		return Climb.PID_out;
 	}	
 	last_time = now_time;
-
 	
-		
+	//高度作为外环 Z轴速度作为内环	
 	pidSetTarget(&AutoHigh_THR, Target);
 	if(HCSR04_Update)
 	{	
 		ClimbTarget = pidUpdate(&AutoHigh_THR , HCSR04_Distance ,ALT_Update_Interval);
 		HCSR04_Update = 0;
 	}	
-
 	ClimbTarget = Math_fConstrain(ClimbTarget,-50.0f,+50.0f); 
 	
-	
 	pidSetTarget(&Climb, ClimbTarget);
-	
 	pidUpdate(&Climb ,IMU_SPEED_Z ,ALT_Update_Interval);
 	Climb.PID_out = Math_fConstrain(Climb.PID_out,-300.0f,+300.0f);
-	
-	
 	Climb.PID_out = Climb_last_out + Math_fConstrain((Climb.PID_out - Climb_last_out),-5,+5);
 	Climb_last_out = Climb.PID_out; 
 		

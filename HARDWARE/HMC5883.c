@@ -13,7 +13,7 @@ S_INT16_XYZ HMC5883L_LAST,AVG_MAG,MOTO1_MAG,MOTO_MAG,MOTO1_MAG,MOTO2_MAG,MOTO3_M
 S_INT16_XYZ	Max,Min;
 S_INT16_XYZ HMC5883L_OFFSET;
 S_FLOAT_XYZ HMC5883L_Gain;
-u8		    MAG_OFFSET_OK = 1;
+u8		    MAG_OFFSET_OK = 0;
 float H_YAW;
 int8_t  HMC5883_Buf_index = 0;
 int16_t  HMC5883_FIFO[3][HMC5883_Buf_Size]; //磁力计滤波
@@ -57,10 +57,7 @@ void HMC5883L_Dataanl(void)
 	HMC5883_FIFO[0][HMC5883_Buf_index] = HMC5883L_LAST.X - MOTO_MAG.X;
 	HMC5883_FIFO[1][HMC5883_Buf_index] = HMC5883L_LAST.Y - MOTO_MAG.Y;
 	HMC5883_FIFO[2][HMC5883_Buf_index] = HMC5883L_LAST.Z - MOTO_MAG.Z;
-	UserData[3]=MOTO_MAG.Y;
-		UserData[5]=MOTO_MAG.X;
 
-	UserData[4]=HMC5883L_LAST.Y;
 	HMC5883_Buf_index = (HMC5883_Buf_index + 1) % HMC5883_Buf_Size;
 	sum=0;
 	for(i=0;i<HMC5883_Buf_Size;i++)
@@ -102,7 +99,7 @@ void HMC5883L_Correction(void)
 	static uint16_t cnt_h=0;
 	HMC5883L_GetMaxMin(HMC5883L_LAST.X,HMC5883L_LAST.Y,HMC5883L_LAST.Z);
 	cnt_h++;
-	if (cnt_h==6000)   //60秒校正时间
+	if (cnt_h==3000)   //60秒校正时间
 	{
 		HMC5883L_GetOFFSET();
 

@@ -420,50 +420,6 @@ void Data_Send_Senser(void)
 #endif
 }
 
-void Data_Send_Senser2(void)
-{
-	u8 _cnt=0;
-	u8 sum = 0;
-	u8 i;
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=0xAA;
-	data_to_send[_cnt++]=0x02;
-	data_to_send[_cnt++]=0;
-	//data_to_send[_cnt++]=BYTE1(MPU6050_ACC_LAST.X);
-
-//	data_to_send[_cnt++]=BYTE0(MPU6050_ACC_LAST.X);
-//	data_to_send[_cnt++]=BYTE1(MPU6050_ACC_LAST.Y);
-//	data_to_send[_cnt++]=BYTE0(MPU6050_ACC_LAST.Y);
-//	data_to_send[_cnt++]=BYTE1(MPU6050_ACC_LAST.Z);
-//	data_to_send[_cnt++]=BYTE0(MPU6050_ACC_LAST.Z);
-//	data_to_send[_cnt++]=BYTE1(MPU6050_GYRO_LAST.X);
-//	data_to_send[_cnt++]=BYTE0(MPU6050_GYRO_LAST.X);
-//	data_to_send[_cnt++]=BYTE1(MPU6050_GYRO_LAST.Y);
-//	data_to_send[_cnt++]=BYTE0(MPU6050_GYRO_LAST.Y);
-//	data_to_send[_cnt++]=BYTE1(MPU6050_GYRO_LAST.Z);
-//	data_to_send[_cnt++]=BYTE0(MPU6050_GYRO_LAST.Z);
-	
-	data_to_send[_cnt++]='0';
-
-	
-	data_to_send[3] = _cnt-4;
-
-	for( i=0;i<_cnt;i++)
-		sum += data_to_send[i];
-	data_to_send[_cnt++] = sum;
-	
-	for( i=0;i<_cnt;i++)
-	{
-		data_to_send_NRF[i+1] = data_to_send[i];
-	}
-	data_to_send_NRF[0] = _cnt;
-#ifdef DATA_TRANSFER_USE_USART
-	Uart1_Put_Buf(data_to_send,_cnt);
-#else
-	NRF24L01_TxPacket(data_to_send_NRF);
-#endif
-}
-
 void Data_Send_Status(void)
 {
 	u8 _cnt=0;

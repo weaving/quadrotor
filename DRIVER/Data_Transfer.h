@@ -12,7 +12,6 @@ void Data_Receive_Anl(u8 *data_buf,u8 num);
 void Data_Exchange(void);
 void Data_Send_Status(void);	
 void Data_Send_Senser(void);	
-void Data_Send_Senser2(void);
 void Data_Send_RCData(void);	
 void Data_Send_OFFSET(void);	
 void Data_Send_PID1(void);

@@ -186,7 +186,7 @@ void StableMode_Control(void)	 //遥控器自稳模式
 
 
 	
-	PWM_Write1_Motors(); //写输出到PWM通道
+	PWM_Write_Motors(); //写输出到PWM通道
 }
 
 
@@ -231,47 +231,17 @@ void PWM_Write_Motors(void)
 	
 	if(THROTTLE > 1020)	  	//保护措施，当油门低时，不启动电机。
 	{
-		motor[0] = PIDMIX(-1,-1,+1);
-		motor[1] = PIDMIX(+1,-1,-1); 
-		motor[2] = PIDMIX(+1,+1,+1)+10;//105是ROLL方向的  40是PITCH方向的
-		motor[3] = PIDMIX(-1,+1,-1)+10;
-		Moto_Reflash(motor[0],motor[1],motor[2],motor[3]);
-	}
-	else   	//油门量小于 5%  不启动电机
-	{
-		motor[0]=1000;
-		motor[1]=1000;
-		motor[2]=1000;
-		motor[3]=1000;
-		PID_ROLL = 0;  //所有的控制量清零
-		PID_PITCH = 0; 
-		PID_YAW = 0;
-		Moto_Reflash(motor[0],motor[1],motor[2],motor[3]);
-	}
-  }
-void PWM_Write1_Motors(void)
-{
-
-	PWM_PID_Smooth();  //平滑输出 
-	
-	if(THROTTLE > 1020)	  	//保护措施，当油门低时，不启动电机。
-	{
 
 		
 		motor[0] = PIDMIX(+1,+1,+1);
 		motor[1] = PIDMIX(+1,-1,-1)-5; 
-		
 		motor[2] = PIDMIX(-1,-1,+1);//105是ROLL方向的  40是PITCH方向的
-			
-
 		motor[3] = PIDMIX(-1,+1,-1);
 
 //		UserData[0] = motor[0];
 //		UserData[1] = motor[1];
 //		UserData[2] = motor[2];
-//		UserData[3] = motor[3];
-
-//	
+//		UserData[3] = motor[3];	
 		Moto_Reflash(motor[0],motor[1],motor[2],motor[3]);
 	}
 	else   	//油门量小于 5%  不启动电机
@@ -285,8 +255,6 @@ void PWM_Write1_Motors(void)
 		PID_YAW = 0;
 		Moto_Reflash(motor[0],motor[1],motor[2],motor[3]);
 	}
-
-
 
 }
 

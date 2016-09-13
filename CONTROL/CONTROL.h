@@ -18,7 +18,6 @@ void AutoHigh_Select_Sensor(void);
 float Get_Current_Altitude(void);
 void PWM_PID_Smooth(void);
 void PWM_Write_Motors(void);
-void PWM_Write1_Motors(void);
 void PWM_Damp_OUT(float Target_Height);//Ç°½ø
 void PWM_sethigh_OUT(float Target_Height);//ºóÍË
 void zuoguai(float Target_Height);

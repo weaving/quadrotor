@@ -178,6 +178,8 @@ int main(void)
 	Control_Init();
 //	HCSR04_Init();
 	TIM7_Int_Init(0xFFFF,83);//1Mhz的计数频率,1us时间度量	
+  GPIO_ResetBits(GPIOA,GPIO_Pin_6 );//灯亮表示程序初始化没问题
+	
 	OSInit();  //UCOS初始化
 	OSTaskCreate(start_task,(void*)0,(OS_STK*)&START_TASK_STK[START_STK_SIZE-1],START_TASK_PRIO); //创建开始任务
 	OSStart(); //开始任务
@@ -278,6 +280,7 @@ void nrf_task(void *pdata)
 	{
 //	Send_Data();
 
+	
 	UserData[8] = RCTarget.Throttle;
 
 		Data_Send_UserData();

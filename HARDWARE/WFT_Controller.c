@@ -3,7 +3,9 @@
 #include "moto.h"
 #include "PID.h"
 #include "data_transfer.h"
-u8 Lock_Flag = 1;  //默认上锁
+//默认上锁
+u8 Lock_dataTransfer = 1;  
+u8 Lock_Motor = 1;
 void Pwm_In_Convert(void)
 {
 	//Pwm_in  1000~2000
@@ -23,13 +25,39 @@ void Pwm_In_Convert(void)
 
 void WFT_CheckLock(void)
 {
-				if (Pwm_In[6]<1200 ) 
+	static u8 wft_state=0;
+	
+			if (Pwm_In[6]<1200 ) 
+			{
+				Lock_dataTransfer = 1;
+			}
+			else if (Pwm_In[6]<1600 ) 
+			{	
+				Lock_dataTransfer = 0;
+			} 
+			else ;
+				
+	switch(wft_state)
+	{
+		case 0:	 //上锁状态，等待解锁
+				Lock_Motor = 1;
+				if (Pwm_In[3]>1800 && Pwm_In[1]<1100) 
 				{
-					Lock_Flag = 1;
+					wft_state=1;
+					GPIO_ResetBits(GPIOA,GPIO_Pin_6 );//灯亮表示解锁成功
 				}
-				else if (Pwm_In[6]<1600 ) 
+				break;
+		case 1:	  //解锁状态，等待上锁
+				Lock_Motor = 0;
+				if (Pwm_In[3]>1800 && Pwm_In[1]>1900) 
 				{	
-					Lock_Flag = 0;
-				} 
-				else ;
+					wft_state=0;
+					GPIO_SetBits(GPIOA,GPIO_Pin_6 );//灯灭表示上锁状态
+				}
+				break;										
+		default:
+				//wft_state=0;
+				break;
+	}			 
+				
 }

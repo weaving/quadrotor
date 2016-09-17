@@ -309,14 +309,14 @@ void Send_Data(void)
 	if((sta & (1<<5))==1)
 		return;
 #endif
-	if(Lock_Flag==1)
+	if(Lock_dataTransfer==1)
 	{
 		if(Send_Status)
 		{
 			Send_Status = 0;
-//			Data_Send_Status();
+			Data_Send_Status();
 
-			Data_Send_UserData();
+//			Data_Send_UserData();
 
 		}
 		else if(Send_GpsData)

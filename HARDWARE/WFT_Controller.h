@@ -3,7 +3,7 @@
 #include "sys.h"
 #include "pwm_capture.h"
 
-extern u8 Lock_Flag;
+extern u8 Lock_Motor, Lock_dataTransfer;
 void Pwm_In_Convert(void);
 void WFT_CheckLock(void);
 #endif

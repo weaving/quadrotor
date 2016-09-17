@@ -1,4 +1,6 @@
 #include "MOTO.h"
+#include "wft_controller.h"
+
 /**
   * @brief  Configure the TIM3 Output Channels.
   * @param  None
@@ -7,19 +9,22 @@
 
 void Moto_Reflash(int16_t MOTO1_PWM,int16_t MOTO2_PWM,int16_t MOTO3_PWM,int16_t MOTO4_PWM)
 {		
-	if(MOTO1_PWM>Moto_PwmMax)	MOTO1_PWM = Moto_PwmMax;
-	if(MOTO2_PWM>Moto_PwmMax)	MOTO2_PWM = Moto_PwmMax;
-	if(MOTO3_PWM>Moto_PwmMax)	MOTO3_PWM = Moto_PwmMax;
-	if(MOTO4_PWM>Moto_PwmMax)	MOTO4_PWM = Moto_PwmMax;
-	if(MOTO1_PWM<Moto_PwmMin)	MOTO1_PWM = Moto_PwmMin;
-	if(MOTO2_PWM<Moto_PwmMin)	MOTO2_PWM = Moto_PwmMin;
-	if(MOTO3_PWM<Moto_PwmMin)	MOTO3_PWM = Moto_PwmMin;
-	if(MOTO4_PWM<Moto_PwmMin)	MOTO4_PWM = Moto_PwmMin;
+	if(!Lock_Motor)
+	{
+		if(MOTO1_PWM>Moto_PwmMax)	MOTO1_PWM = Moto_PwmMax;
+		if(MOTO2_PWM>Moto_PwmMax)	MOTO2_PWM = Moto_PwmMax;
+		if(MOTO3_PWM>Moto_PwmMax)	MOTO3_PWM = Moto_PwmMax;
+		if(MOTO4_PWM>Moto_PwmMax)	MOTO4_PWM = Moto_PwmMax;
+		if(MOTO1_PWM<Moto_PwmMin)	MOTO1_PWM = Moto_PwmMin;
+		if(MOTO2_PWM<Moto_PwmMin)	MOTO2_PWM = Moto_PwmMin;
+		if(MOTO3_PWM<Moto_PwmMin)	MOTO3_PWM = Moto_PwmMin;
+		if(MOTO4_PWM<Moto_PwmMin)	MOTO4_PWM = Moto_PwmMin;
 
-	TIM3->CCR1 = MOTO1_PWM;
-	TIM3->CCR2 = MOTO2_PWM;
-	TIM3->CCR3 = MOTO3_PWM;
-	TIM3->CCR4 = MOTO4_PWM;
+		TIM3->CCR1 = MOTO1_PWM;
+		TIM3->CCR2 = MOTO2_PWM;
+		TIM3->CCR3 = MOTO3_PWM;
+		TIM3->CCR4 = MOTO4_PWM;
+	}
 }
 
 void PWM_MOTO_Config(void)

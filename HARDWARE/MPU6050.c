@@ -22,7 +22,6 @@ void MPU6050_Dataanl(void)
 		MPU6050_ACC_LAST.Y= GetData_MPU6050(ACCEL_YOUT_H) - ACC_OFFSET.Y;
 		MPU6050_ACC_LAST.Z= GetData_MPU6050(ACCEL_ZOUT_H) ;
 		//成功读取I2C数据 说明MPU6050正常运行 用LED亮表示
-	  GPIO_ResetBits(GPIOA,GPIO_Pin_6 );//灯亮
 		
 	  /*
 		我自己的陀螺仪 -3000 代表0g, 也就是ACC_OFFSET.Z=-3000, 14000代表1g,  所以需要校准下

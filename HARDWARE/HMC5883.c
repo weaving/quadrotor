@@ -13,7 +13,7 @@ S_INT16_XYZ HMC5883L_LAST,AVG_MAG,MOTO1_MAG,MOTO_MAG,MOTO1_MAG,MOTO2_MAG,MOTO3_M
 S_INT16_XYZ	Max,Min;
 S_INT16_XYZ HMC5883L_OFFSET;
 S_FLOAT_XYZ HMC5883L_Gain;
-u8		    MAG_OFFSET_OK = 0;
+u8		    MAG_OFFSET_OK = 1;
 float H_YAW;
 int8_t  HMC5883_Buf_index = 0;
 int16_t  HMC5883_FIFO[3][HMC5883_Buf_Size]; //磁力计滤波
@@ -99,7 +99,9 @@ void HMC5883L_Correction(void)
 	static uint16_t cnt_h=0;
 	HMC5883L_GetMaxMin(HMC5883L_LAST.X,HMC5883L_LAST.Y,HMC5883L_LAST.Z);
 	cnt_h++;
-	if (cnt_h==3000)   //60秒校正时间
+	if(cnt_h %30==0)
+	GPIO_ToggleBits(GPIOA, GPIO_Pin_7);
+	if (cnt_h==5000)   //60秒校正时间
 	{
 		HMC5883L_GetOFFSET();
 

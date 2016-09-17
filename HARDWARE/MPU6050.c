@@ -4,12 +4,12 @@
 #include "stm32f4xx_i2c.h"  
 #include "sys.h"
 #include "includes.h"
-//#include "flash_eeprom.h"
+#include "flash_eeprom.h"
 #define M_PI  (float)3.1415926535
 
 S_INT16_XYZ		GYRO_OFFSET,ACC_OFFSET;			//零漂
-u8				GYRO_OFFSET_OK = 0;
-u8				ACC_OFFSET_OK = 0;
+u8				GYRO_OFFSET_OK = 1;
+u8				ACC_OFFSET_OK = 1;
 S_INT16_XYZ		MPU6050_ACC_LAST,MPU6050_GYRO_LAST;		//最新一次读取
 
 /**************************实现函数********************************************
@@ -21,6 +21,9 @@ void MPU6050_Dataanl(void)
 		MPU6050_ACC_LAST.X=	GetData_MPU6050(ACCEL_XOUT_H) - ACC_OFFSET.X;
 		MPU6050_ACC_LAST.Y= GetData_MPU6050(ACCEL_YOUT_H) - ACC_OFFSET.Y;
 		MPU6050_ACC_LAST.Z= GetData_MPU6050(ACCEL_ZOUT_H) ;
+		//成功读取I2C数据 说明MPU6050正常运行 用LED亮表示
+	  GPIO_ResetBits(GPIOA,GPIO_Pin_6 );//灯亮
+		
 	  /*
 		我自己的陀螺仪 -3000 代表0g, 也就是ACC_OFFSET.Z=-3000, 14000代表1g,  所以需要校准下
 		并且当传感器读出超过2g比如32768的值时，这个时候如果直接 MPU6050_ACC_LAST.Z- ACC_OFFSET.Z;	
@@ -62,7 +65,7 @@ void MPU6050_Dataanl(void)
 				GYRO_OFFSET_OK = 1;
 				
 				GPIO_ResetBits(GPIOA,GPIO_Pin_6 );//设置高，灯灭
-				//Flash_SaveOFFSET();//保存数据
+				Flash_SaveOFFSET();//保存数据
 				return;
 			}
 			cnt_g++;
@@ -92,7 +95,7 @@ void MPU6050_Dataanl(void)
 				ACC_OFFSET.Z=tempaz/cnt_a-16384;
 				cnt_a = 0;
 				ACC_OFFSET_OK = 1;
-				//Flash_SaveOFFSET();//保存数据
+				Flash_SaveOFFSET();//保存数据
 				return;
 			}
 			cnt_a++;		

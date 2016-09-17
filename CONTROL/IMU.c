@@ -122,7 +122,7 @@ void Prepare_Data(void)
 void Get_Attitude(void)
 {
 
-//	IMUupdate(GYRO_PLF.X*Gyro_Gr,GYRO_PLF.Y*Gyro_Gr,GYRO_PLF.Z*Gyro_Gr,ACC_PLF.X,ACC_PLF.Y,ACC_PLF.Z);	//*0.0174转成弧度
+	IMUupdate(GYRO_PLF.X*Gyro_Gr,GYRO_PLF.Y*Gyro_Gr,GYRO_PLF.Z*Gyro_Gr,ACC_PLF.X,ACC_PLF.Y,ACC_PLF.Z);	//*0.0174转成弧度
 
 	AHRSupdate(GYRO_PLF.X*Gyro_Gr,
 				GYRO_PLF.Y*Gyro_Gr,
@@ -214,7 +214,8 @@ void IMUupdate(float gx, float gy, float gz, float ax, float ay, float az)
 	eyInt = eyInt + ey * Ki;
 	ezInt = ezInt + ez * Ki;
 	
-	// adjusted gyroscope measurements
+
+// adjusted gyroscope measurements
 	gx = gx + Kp*ex + exInt;					   							//将误差PI后补偿到陀螺仪，即补偿零点漂移
 	gy = gy + Kp*ey + eyInt;
 	gz = gz + Kp*ez + ezInt;				   							//这里的gz由于没有观测者进行矫正会产生漂移，表现出来的就是积分自增或自减
@@ -232,8 +233,8 @@ void IMUupdate(float gx, float gy, float gz, float ax, float ay, float az)
 	q2 = q2 / norm;
 	q3 = q3 / norm;
 	
-	Roll = -atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2* q2 + 1);
-	Pitch = asin(-2 * q1 * q3 + 2 * q0* q2);
+	Roll = atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2* q2 + 1);
+	Pitch = -asin(-2 * q1 * q3 + 2 * q0* q2);
 
 //	Q_ANGLE.Z = GYRO_I.Z;//atan2(2 * q1 * q2 + 2 * q0 * q3, -2 * q2*q2 - 2 * q3* q3 + 1)* 57.3; // yaw
 //	Q_ANGLE.Z = -atan2(2 * q1 * q2 + 2 * q0 * q3, -2 * q2*q2 - 2 * q3* q3 + 1)* 57.3; // yaw
@@ -323,11 +324,11 @@ void AHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, floa
 	mz = mz / norm;
 
    // compute reference direction of flux
-    hx = 2*mx*(0.5f - q2q2 - q3q3) + 2*my*(q1q2 - q0q3) + 2*mz*(q1q3 + q0q2);
-    hy = 2*mx*(q1q2 + q0q3) + 2*my*(0.5f - q1q1 - q3q3) + 2*mz*(q2q3 - q0q1);
-    hz = 2*mx*(q1q3 - q0q2) + 2*my*(q2q3 + q0q1) + 2*mz*(0.5f - q1q1 - q2q2);         
-    bx = sqrt((hx*hx) + (hy*hy));
-    bz = hz;
+	hx = 2*mx*(0.5f - q2q2 - q3q3) + 2*my*(q1q2 - q0q3) + 2*mz*(q1q3 + q0q2);
+	hy = 2*mx*(q1q2 + q0q3) + 2*my*(0.5f - q1q1 - q3q3) + 2*mz*(q2q3 - q0q1);
+	hz = 2*mx*(q1q3 - q0q2) + 2*my*(q2q3 + q0q1) + 2*mz*(0.5f - q1q1 - q2q2);         
+	bx = sqrt((hx*hx) + (hy*hy));
+	bz = hz;
 
 	// estimated direction of gravity and flux (v and w)              估计重力方向和流量/变迁
 	vx = 2*(q1q3 - q0q2);												//四元素中xyz的表示
@@ -341,11 +342,11 @@ void AHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, floa
 	ex = (ay*vz - az*vy)* Accel_magnitude + (my*wz - mz*wy);                          					 //向量外积在相减得到差分就是误差
 	ey = (az*vx - ax*vz)* Accel_magnitude + (mz*wx - mx*wz);
 	ez = (ax*vy - ay*vx)* Accel_magnitude + (mx*wy - my*wx);
-	
+
 	exInt = exInt + ex * Ki;								  //对误差进行积分
 	eyInt = eyInt + ey * Ki;
 	ezInt = ezInt + ez * Ki;
-	
+
 	// adjusted gyroscope measurements
 	gx = gx + Kp*ex + exInt;					   							//将误差PI后补偿到陀螺仪，即补偿零点漂移
 	gy = gy + Kp*ey + eyInt;
@@ -356,6 +357,7 @@ void AHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, floa
 	q1 = q1 + (q0*gx + q2*gz - q3*gy)*halfT;
 	q2 = q2 + (q0*gy - q1*gz + q3*gx)*halfT;
 	q3 = q3 + (q0*gz + q1*gy - q2*gx)*halfT;
+
 	
 	// normalise quaternion
 	norm = sqrt(q0*q0 + q1*q1 + q2*q2 + q3*q3);
@@ -363,12 +365,7 @@ void AHRSupdate(float gx, float gy, float gz, float ax, float ay, float az, floa
 	q1 = q1 / norm;
 	q2 = q2 / norm;
 	q3 = q3 / norm;
-	
-	Roll = atan2(2 * q2 * q3 + 2 * q0 * q1, -2 * q1 * q1 - 2 * q2* q2 + 1);
-	Pitch = -asin(-2 * q1 * q3 + 2 * q0* q2);
-//	Q_ANGLE.Z = -Mag_Yaw; // yaw
-	Q_ANGLE.Z  = atan2(my*cos(-Roll) + mx*sin(-Roll)*sin(-Pitch) - mz*sin(-Roll)*cos(-Pitch), mx*cos(-Pitch)+mz*sin(-Pitch))*180/3.14159265;
+
+	Q_ANGLE.Z = atan2(2 * q1 * q2 + 2 * q0 * q3, -2 * q2*q2 - 2 * q3* q3 + 1)* 57.3; // yaw
 	Mag_Yaw = Q_ANGLE.Z;
-	Q_ANGLE.Y = Pitch * 180 / 3.1415926f - AngleOffset_Pit;
-	Q_ANGLE.X = Roll * 180 / 3.1415926f - AngleOffset_Rol;
 }

@@ -242,23 +242,18 @@ void Flash_ReadOFFSET(void)
 	 u32 read_data[14];
 	STMFLASH_Read(SECTION_ADDR_OFFSET,(u32*)read_data,14);
 
-	 ACC_OFFSET.X=0;
-	 ACC_OFFSET.Y=0;
-	 ACC_OFFSET.Z=0;
-	 GYRO_OFFSET.X=0;
-	 GYRO_OFFSET.Y=0;
-	 GYRO_OFFSET.Z=0;
-	 HMC5883L_OFFSET.X=read_data[5];
-	 HMC5883L_OFFSET.Y=read_data[6];
-	 HMC5883L_OFFSET.Z=read_data[7];
-//	 HMC5883L_Gain.X=(float)(read_data[8])/10000; 
-	 HMC5883L_Gain.X=(float)(read_data[8]/10000); 
-	 HMC5883L_Gain.Y=(float)(read_data[9])/10000;
-	 HMC5883L_Gain.Z=(float)(read_data[10])/10000;
-     //XY漂移不大，去掉XY加速度漂移，因为如果校正数据为负数，转换成INT存入FLASH后会导致FLASH出错，不明原因			   
-	 //Accel_Offset.X=(float)(read_data[11])/1000; 	
-	 //Accel_Offset.Y=(float)(read_data[12])/1000;
-	 Accel_Offset.Z=(float)(read_data[13])/10;
+	 ACC_OFFSET.X = read_data[0];
+	 ACC_OFFSET.Y = read_data[1];
+	 ACC_OFFSET.Z = read_data[2];
+	 GYRO_OFFSET.X = read_data[3];
+	 GYRO_OFFSET.Y = read_data[4];
+	 GYRO_OFFSET.Z = read_data[5];
+	 HMC5883L_OFFSET.X = read_data[6];
+	 HMC5883L_OFFSET.Y = read_data[7];
+	 HMC5883L_OFFSET.Z = read_data[8];
+	 HMC5883L_Gain.X = (float)(read_data[9]/10000); 
+	 HMC5883L_Gain.Y = (float)(read_data[10])/10000;
+	 HMC5883L_Gain.Z = (float)(read_data[11])/10000;
 }
 
 void Flash_SaveOFFSET(void)
@@ -266,27 +261,19 @@ void Flash_SaveOFFSET(void)
 	u32 save_data[50];
 	u32 read_data[36];
 	int i;
-	save_data[0]=ACC_OFFSET.X;
-	save_data[1]=ACC_OFFSET.Y;
-	//save_data[11]=ACC_OFFSET.Z;
-	
-	save_data[2]=GYRO_OFFSET.X;
-	save_data[3]=GYRO_OFFSET.Y;
-	save_data[4]=GYRO_OFFSET.Z;
-	//XY漂移不大，去掉XY加速度漂移，因为如果校正数据为负数，转换成INT存入FLASH后会导致FLASH出错，不明原因
-	//save_data[11]=(int)(Accel_Offset.X*100); 
-	//save_data[12]=(int)(Accel_Offset.Y*100);
-//	save_data[13]=(int)(Accel_Offset.Z*10);
-	//HMC5883L_OFFSET.X=-114;
-	save_data[5]=HMC5883L_OFFSET.X;
-	//HMC5883L_OFFSET.Y=-68;
-	save_data[6]=HMC5883L_OFFSET.Y;
-	//HMC5883L_OFFSET.Z=-99;
-	save_data[7]=HMC5883L_OFFSET.Z;			   
-//	save_data[8]=(int)(HMC5883L_Gain.X*10000);//10000;
-	save_data[8]=(int)(HMC5883L_Gain.X*10000);//10000;
-	save_data[9]=(int)(HMC5883L_Gain.Y*10000);//10106;
-	save_data[10]=(int)(HMC5883L_Gain.Z*10000);//11543;
+	save_data[0] = ACC_OFFSET.X;
+	save_data[1] = ACC_OFFSET.Y;
+	save_data[2] = ACC_OFFSET.Z;
+
+	save_data[3] = GYRO_OFFSET.X;
+	save_data[4] = GYRO_OFFSET.Y;
+	save_data[5] = GYRO_OFFSET.Z;
+	save_data[6] = HMC5883L_OFFSET.X;
+	save_data[7] = HMC5883L_OFFSET.Y;
+	save_data[8] = HMC5883L_OFFSET.Z;			   
+	save_data[9] = (int)(HMC5883L_Gain.X*10000);//10000;
+	save_data[10] = (int)(HMC5883L_Gain.Y*10000);//10106;
+	save_data[11] = (int)(HMC5883L_Gain.Z*10000);//11543;
 	
 	STMFLASH_Read(SECTION_ADDR_PID,(u32*)read_data,36);
 	 for(i=0;i<14;i++)

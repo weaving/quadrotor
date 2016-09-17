@@ -9,3 +9,6 @@
 *.lst
 *.dep
 *.axf
+*.bak
+*.tmp
+*.iex

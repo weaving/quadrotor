@@ -125,6 +125,10 @@ void Data_Receive_Anl(u8 *data_buf,u8 num)
 			Stabilize_Yaw.Ki = (float)((vs16)(*(data_buf+18)<<8)|*(data_buf+19))/1000;
 			Stabilize_Yaw.Kd = (float)((vs16)(*(data_buf+20)<<8)|*(data_buf+21))/10;
 			*/
+			YawRate.Kp = (float)((vs16)(*(data_buf+16)<<8)|*(data_buf+17))/1000;
+			YawRate.Ki = (float)((vs16)(*(data_buf+18)<<8)|*(data_buf+19))/100;
+			YawRate.Kd = (float)((vs16)(*(data_buf+20)<<8)|*(data_buf+21))/100;
+			
 			Send_PID1 = 1;
 			Data_Send_Check(sum);
 //			for(i=0;i<100;i++) Data_Send_Check(sum);
@@ -147,9 +151,7 @@ void Data_Receive_Anl(u8 *data_buf,u8 num)
 			PitchAccel.Kp = RollAccel.Kp;
 			PitchAccel.Ki = RollAccel.Ki;
 			PitchAccel.Kd = RollAccel.Kd;
-			YawRate.Kp = (float)((vs16)(*(data_buf+16)<<8)|*(data_buf+17))/1000;
-			YawRate.Ki = (float)((vs16)(*(data_buf+18)<<8)|*(data_buf+19))/100;
-			YawRate.Kd = (float)((vs16)(*(data_buf+20)<<8)|*(data_buf+21))/100;
+
 			Send_PID2 = 1;
 			Data_Send_Check(sum);
 //			for(i=0;i<100;i++) Respond_PID2();
@@ -314,9 +316,9 @@ void Send_Data(void)
 		if(Send_Status)
 		{
 			Send_Status = 0;
-			Data_Send_Status();
+//			Data_Send_Status();
 
-//			Data_Send_UserData();
+			Data_Send_UserData();
 
 		}
 		else if(Send_GpsData)

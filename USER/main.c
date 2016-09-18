@@ -278,12 +278,12 @@ void nrf_task(void *pdata)
 	NRF24L01_RX_Mode();		
 	while(1)
 	{
-//	Send_Data();
+	Send_Data();
 
 	
 	UserData[8] = RCTarget.Throttle;
 
-		Data_Send_UserData();
+//		Data_Send_UserData();
 
 //	Data_Send_UserData();
 //  Data_Send_Senser();

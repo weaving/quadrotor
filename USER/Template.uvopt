@@ -167,7 +167,7 @@
           <Type>0</Type>
           <LineNumber>106</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134224698</Address>
+          <Address>134224736</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -183,7 +183,7 @@
           <Type>0</Type>
           <LineNumber>103</LineNumber>
           <EnabledFlag>1</EnabledFlag>
-          <Address>134224678</Address>
+          <Address>134224716</Address>
           <ByteObject>0</ByteObject>
           <HtxType>0</HtxType>
           <ManyObjects>0</ManyObjects>
@@ -192,7 +192,7 @@
           <BreakIfRCount>1</BreakIfRCount>
           <Filename>..\HARDWARE\HMC5883.c</Filename>
           <ExecCommand></ExecCommand>
-          <Expression>\\Template\../HARDWARE/HMC5883.c\103</Expression>
+          <Expression></Expression>
         </Bp>
       </Breakpoint>
       <WatchWindow1>
@@ -210,6 +210,21 @@
           <count>2</count>
           <WinNumber>1</WinNumber>
           <ItemText>cnt_h,0x0A</ItemText>
+        </Ww>
+        <Ww>
+          <count>3</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>RollRate</ItemText>
+        </Ww>
+        <Ww>
+          <count>4</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>Stabilize_Roll</ItemText>
+        </Ww>
+        <Ww>
+          <count>5</count>
+          <WinNumber>1</WinNumber>
+          <ItemText>YawRate.Kp</ItemText>
         </Ww>
       </WatchWindow1>
       <WatchWindow2>
@@ -287,10 +302,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>9</ColumnNumber>
+      <ColumnNumber>10</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>269</TopLine>
-      <CurrentLine>279</CurrentLine>
+      <TopLine>275</TopLine>
+      <CurrentLine>281</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\main.c</PathWithFileName>
       <FilenameWithoutPath>main.c</FilenameWithoutPath>
@@ -345,7 +360,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>3</TopLine>
+      <TopLine>5</TopLine>
       <CurrentLine>25</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\HARDWARE\LED\led.c</PathWithFileName>
@@ -375,10 +390,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>0</ColumnNumber>
+      <ColumnNumber>18</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>240</TopLine>
-      <CurrentLine>241</CurrentLine>
+      <TopLine>132</TopLine>
+      <CurrentLine>133</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\HARDWARE\Flash_eeprom.c</PathWithFileName>
       <FilenameWithoutPath>Flash_eeprom.c</FilenameWithoutPath>
@@ -391,10 +406,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>18</ColumnNumber>
+      <ColumnNumber>2</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>208</TopLine>
-      <CurrentLine>214</CurrentLine>
+      <TopLine>213</TopLine>
+      <CurrentLine>220</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\HARDWARE\HCSR04.c</PathWithFileName>
       <FilenameWithoutPath>HCSR04.c</FilenameWithoutPath>
@@ -407,10 +422,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>23</ColumnNumber>
+      <ColumnNumber>25</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>15</CurrentLine>
+      <TopLine>33</TopLine>
+      <CurrentLine>38</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\HARDWARE\MPU6050.c</PathWithFileName>
       <FilenameWithoutPath>MPU6050.c</FilenameWithoutPath>
@@ -425,7 +440,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>37</TopLine>
+      <TopLine>39</TopLine>
       <CurrentLine>59</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\HARDWARE\TIMER.c</PathWithFileName>
@@ -439,10 +454,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>27</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>16</CurrentLine>
+      <TopLine>11</TopLine>
+      <CurrentLine>17</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\HARDWARE\HMC5883.c</PathWithFileName>
       <FilenameWithoutPath>HMC5883.c</FilenameWithoutPath>
@@ -487,10 +502,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>94</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>13</TopLine>
-      <CurrentLine>18</CurrentLine>
+      <TopLine>44</TopLine>
+      <CurrentLine>53</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\HARDWARE\WFT_Controller.c</PathWithFileName>
       <FilenameWithoutPath>WFT_Controller.c</FilenameWithoutPath>
@@ -505,8 +520,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>93</TopLine>
-      <CurrentLine>115</CurrentLine>
+      <TopLine>11</TopLine>
+      <CurrentLine>12</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\HARDWARE\MOTO.c</PathWithFileName>
       <FilenameWithoutPath>MOTO.c</FilenameWithoutPath>
@@ -519,7 +534,7 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>44</ColumnNumber>
+      <ColumnNumber>47</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
       <TopLine>80</TopLine>
       <CurrentLine>81</CurrentLine>
@@ -577,7 +592,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>177</TopLine>
+      <TopLine>178</TopLine>
       <CurrentLine>182</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\CORE\startup_stm32f40_41xxx.s</PathWithFileName>
@@ -713,7 +728,7 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1155</TopLine>
+      <TopLine>1158</TopLine>
       <CurrentLine>1159</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\FWLIB\STM32F4xx_StdPeriph_Driver\src\stm32f4xx_i2c.c</PathWithFileName>
@@ -825,8 +840,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1759</TopLine>
-      <CurrentLine>1762</CurrentLine>
+      <TopLine>1760</TopLine>
+      <CurrentLine>1765</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\UCOSII\CORE\os_core.c</PathWithFileName>
       <FilenameWithoutPath>os_core.c</FilenameWithoutPath>
@@ -1009,8 +1024,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>69</TopLine>
-      <CurrentLine>75</CurrentLine>
+      <TopLine>68</TopLine>
+      <CurrentLine>73</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\UCOSII\PORT\os_cpu_a.asm</PathWithFileName>
       <FilenameWithoutPath>os_cpu_a.asm</FilenameWithoutPath>
@@ -1025,8 +1040,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>1</TopLine>
-      <CurrentLine>1</CurrentLine>
+      <TopLine>136</TopLine>
+      <CurrentLine>141</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\UCOSII\PORT\os_cpu_c.c</PathWithFileName>
       <FilenameWithoutPath>os_cpu_c.c</FilenameWithoutPath>
@@ -1087,10 +1102,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>14</ColumnNumber>
+      <ColumnNumber>27</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>303</TopLine>
-      <CurrentLine>312</CurrentLine>
+      <TopLine>316</TopLine>
+      <CurrentLine>319</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\DRIVER\Data_Transfer.c</PathWithFileName>
       <FilenameWithoutPath>Data_Transfer.c</FilenameWithoutPath>
@@ -1105,8 +1120,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>317</TopLine>
-      <CurrentLine>318</CurrentLine>
+      <TopLine>343</TopLine>
+      <CurrentLine>348</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\DRIVER\i2c.c</PathWithFileName>
       <FilenameWithoutPath>i2c.c</FilenameWithoutPath>
@@ -1137,8 +1152,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>159</TopLine>
-      <CurrentLine>164</CurrentLine>
+      <TopLine>6</TopLine>
+      <CurrentLine>9</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\DRIVER\PWM_Capture.c</PathWithFileName>
       <FilenameWithoutPath>PWM_Capture.c</FilenameWithoutPath>
@@ -1175,10 +1190,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>17</ColumnNumber>
+      <ColumnNumber>25</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>176</TopLine>
-      <CurrentLine>181</CurrentLine>
+      <TopLine>227</TopLine>
+      <CurrentLine>240</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\CONTROL\CONTROL.c</PathWithFileName>
       <FilenameWithoutPath>CONTROL.c</FilenameWithoutPath>
@@ -1191,10 +1206,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>41</ColumnNumber>
+      <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>232</TopLine>
-      <CurrentLine>251</CurrentLine>
+      <TopLine>96</TopLine>
+      <CurrentLine>97</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\CONTROL\IMU.c</PathWithFileName>
       <FilenameWithoutPath>IMU.c</FilenameWithoutPath>
@@ -1209,8 +1224,8 @@
       <Focus>0</Focus>
       <ColumnNumber>0</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>206</TopLine>
-      <CurrentLine>210</CurrentLine>
+      <TopLine>209</TopLine>
+      <CurrentLine>224</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>..\CONTROL\PID.c</PathWithFileName>
       <FilenameWithoutPath>PID.c</FilenameWithoutPath>

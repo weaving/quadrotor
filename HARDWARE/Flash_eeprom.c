@@ -124,13 +124,13 @@ void Flash_ReadPID(void)
 	RollRate.Kp=0.05;
 	RollRate.Ki=0;
 	RollRate.Kd=1.0;
-//	
+	
 	PitchRate.Kp=0.05;
 	PitchRate.Ki=0;
 	PitchRate.Kd=1;
 	
 
-	YawRate.Kp=0.03;
+	YawRate.Kp=0.05;
 	YawRate.Ki=0;
 	YawRate.Kd=0;
 	

@@ -232,12 +232,11 @@ void PWM_Write_Motors(void)
 	if(THROTTLE > 1020)	  	//保护措施，当油门低时，不启动电机。
 	{
 
-		
-		motor[0] = PIDMIX(+1,+1,+1);
-		motor[1] = PIDMIX(+1,-1,-1)-5; 
-		motor[2] = PIDMIX(-1,-1,+1);//105是ROLL方向的  40是PITCH方向的
-		motor[3] = PIDMIX(-1,+1,-1);
 
+		motor[0] = PIDMIX(+1,+1,-1);
+		motor[1] = PIDMIX(+1,-1,+1)-5; 
+		motor[2] = PIDMIX(-1,-1,-1);//105是ROLL方向的  40是PITCH方向的
+		motor[3] = PIDMIX(-1,+1,+1);
 //		UserData[0] = motor[0];
 //		UserData[1] = motor[1];
 //		UserData[2] = motor[2];

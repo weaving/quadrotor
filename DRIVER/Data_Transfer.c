@@ -316,9 +316,9 @@ void Send_Data(void)
 		if(Send_Status)
 		{
 			Send_Status = 0;
-//			Data_Send_Status();
+			Data_Send_Status();
 
-			Data_Send_UserData();
+//			Data_Send_UserData();
 
 		}
 		else if(Send_GpsData)

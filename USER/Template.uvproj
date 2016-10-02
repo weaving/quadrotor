@@ -485,6 +485,11 @@
               <FileType>1</FileType>
               <FilePath>..\HARDWARE\OV7670\ov7670.c</FilePath>
             </File>
+            <File>
+              <FileName>OpticalFlow.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\HARDWARE\OpticalFlow.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

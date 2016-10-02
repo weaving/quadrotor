@@ -101,7 +101,7 @@ void HMC5883L_Correction(void)
 	cnt_h++;
 	if(cnt_h %30==0)
 	GPIO_ToggleBits(GPIOA, GPIO_Pin_7);
-	if (cnt_h==5000)   //60秒校正时间
+	if (cnt_h==6000)   //60秒校正时间
 	{
 		HMC5883L_GetOFFSET();
 

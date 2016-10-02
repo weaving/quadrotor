@@ -25,6 +25,7 @@
 #include "exti.h"
 #include "wft_controller.h"
 #include "pid.h"
+#include "OpticalFlow.h"
 // STM32F407开发板 UCOS实验1
 //UCOSII 移植
 //STM32F4工程 
@@ -79,6 +80,17 @@ void hmc5883_task(void *pdata);
 OS_STK HCSR04_TASK_STK[HCSR04_STK_SIZE];
 //任务函数
 void hcsr04_task(void *pdata);
+
+
+//光流传感器
+//设置任务优先级
+#define OpticalFlow_TASK_PRIO			5
+//设置任务堆栈大小
+#define OpticalFlow_STK_SIZE				64*200
+//任务堆栈
+OS_STK OpticalFlow_TASK_STK[OpticalFlow_STK_SIZE];
+//任务函数
+void OpticalFlow_task(void *pdata);
 
 
 //NRF24L01收发数据
@@ -171,10 +183,10 @@ int main(void)
  	OV7670_Special_Effects(effect);	
 	OV7670_Window_Set(12,174,240,320);
 #endif
-
+	OpticalFlow_init();
 	MPU6050_Init();
 	HMC5883_Init();
-	NRF24L01_Init();
+//	NRF24L01_Init();
 	Control_Init();
 //	HCSR04_Init();
 	TIM7_Int_Init(0xFFFF,83);//1Mhz的计数频率,1us时间度量	
@@ -196,15 +208,17 @@ void start_task(void *pdata)
 	
 	OS_ENTER_CRITICAL();  //进入临界区(关闭中断)
 	OSTaskCreate(mpu6050_task,(void*)0,(OS_STK*)&MPU6050_TASK_STK[MPU6050_STK_SIZE-1],MPU6050_TASK_PRIO);//创建MPU6050任务
-	OSTaskCreate(hmc5883_task,(void*)0,(OS_STK*)&HMC5883_TASK_STK[HMC5883_STK_SIZE-1],HMC5883_TASK_PRIO);//创建HMC5883任务
+//	OSTaskCreate(hmc5883_task,(void*)0,(OS_STK*)&HMC5883_TASK_STK[HMC5883_STK_SIZE-1],HMC5883_TASK_PRIO);//创建HMC5883任务
 
 //	OSTaskCreate(led0_task,(void*)0,(OS_STK*)&LED0_TASK_STK[LED0_STK_SIZE-1],LED0_TASK_PRIO);//创建LED0任务
 //	OSTaskCreate(led1_task,(void*)0,(OS_STK*)&LED1_TASK_STK[LED1_STK_SIZE-1],LED1_TASK_PRIO);//创建LED1任务
 //	OSTaskCreate(float_task,(void*)0,(OS_STK*)&FLOAT_TASK_STK[FLOAT_STK_SIZE-1],FLOAT_TASK_PRIO);//创建浮点测试任务
 //	OSTaskCreate(hcsr04_task,(void*)0,(OS_STK*)&HCSR04_TASK_STK[HCSR04_STK_SIZE-1],HCSR04_TASK_PRIO);//创建HCSR04任务
+	OSTaskCreate(OpticalFlow_task,(void*)0,(OS_STK*)&OpticalFlow_TASK_STK[OpticalFlow_STK_SIZE-1],OpticalFlow_TASK_PRIO);//创建WFT07任务
+	
 	OSTaskCreate(wft_task,(void*)0,(OS_STK*)&WFT_TASK_STK[WFT_STK_SIZE-1],WFT_TASK_PRIO);//创建WFT07任务
 
-	OSTaskCreate(nrf_task,(void*)0,(OS_STK*)&NRF_TASK_STK[NRF_STK_SIZE-1],NRF_TASK_PRIO);//创建NRF任务
+//	OSTaskCreate(nrf_task,(void*)0,(OS_STK*)&NRF_TASK_STK[NRF_STK_SIZE-1],NRF_TASK_PRIO);//创建NRF任务
 #if SUPPORT_OV7670==1
 		OSTaskCreate(ov7670_task,(void*)0,(OS_STK*)&OV7670_TASK_STK[OV7670_STK_SIZE-1],OV7670_TASK_PRIO);//创建NRF任务
 #endif
@@ -220,6 +234,7 @@ void mpu6050_task(void *pdata)
 	
 //	OS_CPU_SR cpu_sr=0;
 	u8 ms1=0;
+//	u8 time1,time,time2;
 	while(1)
 	{
 //			time1 = OSTimeGet();
@@ -238,7 +253,7 @@ void mpu6050_task(void *pdata)
 			}
 			delay_ms(3);
 //time1 = OSTimeGet();
-//		
+		
 //			printf(" CPU Usage: %ld%    \r\n",OSCPUUsage);  
 //					time2 = OSTimeGet();
 //		  time = time2-time1;
@@ -257,6 +272,54 @@ void hmc5883_task(void *pdata)
 			delay_ms(20);
 	};
 }
+
+//OpticalFlow_task
+void OpticalFlow_task(void *pdata)
+{
+	static u8 OpticalFlow_frame[22];
+		float IMU_SPEED_Z_tmp,IMU_SPEED_Z_sum,flow_comp_m_x,flow_comp_m_y;
+	static uint32_t last_time=0, now_time=0; // 采样周期计数 单位 us
+	static float speed_Z[5],last_HCSR04_Distance=0;	
+	u8 i,ms=0;
+
+	while(1)
+	{
+		GetData_OpticalFlow(0x0, OpticalFlow_frame);
+		
+
+		if(ms==0 || ms==1)
+		{
+			flow_comp_m_x = OpticalFlow_frame[6]<<8 | OpticalFlow_frame[7];
+			flow_comp_m_y = OpticalFlow_frame[8]<<8 | OpticalFlow_frame[9];
+			ms++;
+		}
+		if(ms==2)
+		{
+			HCSR04_Distance = OpticalFlow_frame[20]<<8 |OpticalFlow_frame[21];
+
+			IMU_SPEED_Z_tmp = (HCSR04_Distance-last_HCSR04_Distance)/(now_time-last_time)*1000000.0f;
+			/* cal speed_Z */
+			/* sum speed_Z 10 times */
+			for(i=0;i<sizeof(speed_Z)/sizeof(float);i++)
+				speed_Z[i]=speed_Z[i+1];
+			speed_Z[i] = 	IMU_SPEED_Z_tmp;
+			
+			/* then cal the average speed_Z */
+			IMU_SPEED_Z_sum=0;
+			for(i=0;i<sizeof(speed_Z)/sizeof(float);i++)
+				IMU_SPEED_Z_sum += speed_Z[i];
+			IMU_SPEED_Z = IMU_SPEED_Z_sum/(sizeof(speed_Z)/sizeof(float));
+			
+			/* ready for the next cal */
+			last_HCSR04_Distance = HCSR04_Distance;
+			
+			HCSR04_Update = 1;
+			ms=0;
+		}
+		delay_ms(15);
+	}
+}
+
 //hcsr04
 void hcsr04_task(void *pdata)
 {	
@@ -278,12 +341,12 @@ void nrf_task(void *pdata)
 	NRF24L01_RX_Mode();		
 	while(1)
 	{
-	Send_Data();
+//	Send_Data();
 
 	
 	UserData[8] = RCTarget.Throttle;
 
-//		Data_Send_UserData();
+		Data_Send_UserData();
 
 //	Data_Send_UserData();
 //  Data_Send_Senser();

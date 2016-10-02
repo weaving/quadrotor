@@ -24,6 +24,8 @@ int16_t PID_ROLL,PID_PITCH,PID_YAW;
 float  Target_Yaw_Rate=0,Target_Roll=0,Target_Pitch=0,Target_Yaw=0,Target_Altitude=0,Altitude_Standard=0,Target_Latitude[2],Target_Longitude[2];
 u8 Position_Ready = 0;
 
+u8 Auto_Fixed_High;
+float Fixed_High;
 void Control_Init(void)
 {
 	Flash_ReadOFFSET();
@@ -148,9 +150,10 @@ void StableMode_Control(void)	 //遥控器自稳模式
 	{
 		HeadFree_Yaw_Error = Get_Yaw_Error(HeadFree_Yaw_Set,Mag_Yaw);
 		HeadFree_Yaw_Error *= 0.0174533f; //转换成弧度
-		Target_Roll = RCTarget.Roll * cos(HeadFree_Yaw_Error) - RCTarget.Pitch * sin(HeadFree_Yaw_Error);
-		Target_Pitch = RCTarget.Roll * sin(HeadFree_Yaw_Error) + RCTarget.Pitch * cos(HeadFree_Yaw_Error);
+		Target_Roll = RCTarget.Roll * cos(HeadFree_Yaw_Error) + RCTarget.Pitch * sin(HeadFree_Yaw_Error);
+		Target_Pitch = -RCTarget.Roll * sin(HeadFree_Yaw_Error) + RCTarget.Pitch * cos(HeadFree_Yaw_Error);
 
+	
 	}
 	else
 	{
@@ -158,8 +161,13 @@ void StableMode_Control(void)	 //遥控器自稳模式
 		Target_Roll = RCTarget.Roll;
 		Target_Pitch = RCTarget.Pitch;		
 	}
-	
-	THROTTLE=RCTarget.Throttle;//+Auto_High_PID(HCSR04_Distance_Last,0);
+	if( Auto_Fixed_High )
+		THROTTLE=RCTarget.Throttle+Auto_High_PID(Fixed_High,0);
+	else
+	{
+		THROTTLE=RCTarget.Throttle;
+		Fixed_High = HCSR04_Distance;
+	}
 	//}
 //	if(THROTTLE<1200)	 //低油门不启用YAW控制，所有PID积分清零
 //	{

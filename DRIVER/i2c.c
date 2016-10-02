@@ -47,37 +47,38 @@ void I2C_Configuration(void)
 	I2C_AcknowledgeConfig(I2C2, ENABLE);//好想没什么意义 之前开启过了
 }
 
-//void I2C_Configuration(void)
-//{
-////	I2C_InitTypeDef  I2C_InitStructure;
-//	GPIO_InitTypeDef  GPIO_InitStructure; 
+void I2C1_Configuration(void)
+{
+	I2C_InitTypeDef  I2C_InitStructure;
+	GPIO_InitTypeDef  GPIO_InitStructure; 
 
-//	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
-////	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C2,ENABLE);//打开i2c总线
+	RCC_AHB1PeriphClockCmd(RCC_AHB1Periph_GPIOB,ENABLE);
+	RCC_APB1PeriphClockCmd(RCC_APB1Periph_I2C1,ENABLE);//打开i2c总线
 
-////	GPIO_PinAFConfig(GPIOB, GPIO_PinSource10, GPIO_AF_I2C2);//I2C2_SCL 对应 PB10
-////	GPIO_PinAFConfig(GPIOB, GPIO_PinSource11, GPIO_AF_I2C2);//I2C2_SDA 对应 PB11
+	GPIO_PinAFConfig(GPIOB, GPIO_PinSource6, GPIO_AF_I2C1);//I2C1_SCL 对应 PB6
+	GPIO_PinAFConfig(GPIOB, GPIO_PinSource7, GPIO_AF_I2C1);//I2C1_SDA 对应 PB7
 
-//	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_10 | GPIO_Pin_11;
-//	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_OUT;
-//	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
-//	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
-//	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
-//	GPIO_Init(GPIOB, &GPIO_InitStructure);
+	GPIO_InitStructure.GPIO_Pin =  GPIO_Pin_6 | GPIO_Pin_7;
+	GPIO_InitStructure.GPIO_Mode = GPIO_Mode_AF;
+	GPIO_InitStructure.GPIO_OType = GPIO_OType_OD;
+	GPIO_InitStructure.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_InitStructure.GPIO_PuPd = GPIO_PuPd_NOPULL;
+	GPIO_Init(GPIOB, &GPIO_InitStructure);
 
-////	I2C_DeInit(I2C2);
-////	I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
-////	I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
-////	I2C_InitStructure.I2C_OwnAddress1 = 0xd0;  //MPU6050
-////	I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;  //ack enable
-////	I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
-////	I2C_InitStructure.I2C_ClockSpeed = 400000;  //100k
+	I2C_DeInit(I2C1);
+	I2C_InitStructure.I2C_Mode = I2C_Mode_I2C;
+	I2C_InitStructure.I2C_DutyCycle = I2C_DutyCycle_2;
+	I2C_InitStructure.I2C_OwnAddress1 = 0x0;  //MPU6050
+	I2C_InitStructure.I2C_Ack = I2C_Ack_Enable;  //ack enable
+	I2C_InitStructure.I2C_AcknowledgedAddress = I2C_AcknowledgedAddress_7bit;
+	I2C_InitStructure.I2C_ClockSpeed = 100000;  //100k
 
-////	I2C_Cmd(I2C2, ENABLE);
-////	I2C_Init(I2C2, &I2C_InitStructure);
+	I2C_Cmd(I2C1, ENABLE);
+	I2C_Init(I2C1, &I2C_InitStructure);
 
-////	I2C_AcknowledgeConfig(I2C2, ENABLE);//好想没什么意义 之前开启过了
-//}
+	I2C_AcknowledgeConfig(I2C1, ENABLE);//好想没什么意义 之前开启过了
+}
+
 void SDA_OUT(void)
 { 
 	GPIO_InitTypeDef GPIO_InitStructure;
@@ -425,6 +426,149 @@ uint8_t* I2C_GetData(uint8_t addr,uint8_t REG_data, uint8_t length, uint8_t*  Re
   }
   /* Enable Acknowledgement to be ready for another reception */
   I2C_AcknowledgeConfig(I2C2, ENABLE);
+	OS_EXIT_CRITICAL();	
+	return Rece_Data;
+	
+}
+
+void I2C1_ByteWrite(uint8_t SlaveAddress,uint8_t REG_Address,uint8_t REG_data)
+{
+	OS_CPU_SR cpu_sr=0;
+
+	OS_ENTER_CRITICAL();	
+	I2C_GenerateSTART(I2C1,ENABLE);
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_MODE_SELECT));
+
+	I2C_Send7bitAddress(I2C1,SlaveAddress,I2C_Direction_Transmitter);
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));
+
+	I2C_SendData(I2C1,REG_Address);
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+
+	I2C_SendData(I2C1,REG_data);
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+
+	I2C_GenerateSTOP(I2C1,ENABLE);
+
+	OS_EXIT_CRITICAL();	
+
+}
+
+
+uint8_t I2C1_ByteRead(uint8_t addr , uint8_t REG_Address)
+{
+	OS_CPU_SR cpu_sr=0;
+
+	uint8_t REG_data;
+	
+	OS_ENTER_CRITICAL();	
+
+	while(I2C_GetFlagStatus(I2C1,I2C_FLAG_BUSY));
+
+	I2C_GenerateSTART(I2C1,ENABLE);//????
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_MODE_SELECT));
+
+	I2C_Send7bitAddress(I2C1,addr,I2C_Direction_Transmitter);//??????+???
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));//
+
+	I2C_Cmd(I2C1,ENABLE);
+
+	I2C_SendData(I2C1,REG_Address);//????????,?0??
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+
+	I2C_GenerateSTART(I2C1,ENABLE);//????
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_MODE_SELECT));
+
+	I2C_Send7bitAddress(I2C1,addr,I2C_Direction_Receiver);//??????+???
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED));
+
+	I2C_AcknowledgeConfig(I2C1,DISABLE);
+
+	I2C_GenerateSTOP(I2C1,ENABLE);
+
+	while(!(I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_BYTE_RECEIVED)));
+
+	REG_data=I2C_ReceiveData(I2C1);//???????
+
+	OS_EXIT_CRITICAL();	
+
+	return REG_data;
+
+}
+
+uint8_t* I2C1_GetData(uint8_t addr,uint8_t REG_data, uint8_t length, uint8_t*  Rece_Data)
+{
+	OS_CPU_SR cpu_sr=0;
+	u8 i=length;
+	u8 j=0;
+	OS_ENTER_CRITICAL();	
+	I2C_AcknowledgeConfig(I2C1,ENABLE);
+
+	while(I2C_GetFlagStatus(I2C1,I2C_FLAG_BUSY));
+
+	I2C_GenerateSTART(I2C1,ENABLE);//????
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_MODE_SELECT));
+
+	I2C_Send7bitAddress(I2C1,addr,I2C_Direction_Transmitter);//??????+???
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_TRANSMITTER_MODE_SELECTED));//
+	
+	while(I2C_GetFlagStatus(I2C1,I2C_FLAG_AF));
+	
+	I2C_Cmd(I2C1,ENABLE);
+
+	I2C_SendData(I2C1,REG_data);//read ACCEL_XOUT_H
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_BYTE_TRANSMITTED));
+	
+	while(I2C_GetFlagStatus(I2C1,I2C_FLAG_AF));
+
+	I2C_GenerateSTART(I2C1,ENABLE);//????
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_MODE_SELECT));
+
+	I2C_Send7bitAddress(I2C1,addr,I2C_Direction_Receiver);//??????+???
+
+	while(!I2C_CheckEvent(I2C1,I2C_EVENT_MASTER_RECEIVER_MODE_SELECTED));
+	
+	
+	  /* While there is data to be read */
+  while(i)
+  {
+    if(i == 1)
+    {
+      /* Disable Acknowledgement */
+      I2C_AcknowledgeConfig(I2C1, DISABLE);
+
+      /* Send STOP Condition */
+      I2C_GenerateSTOP(I2C1, ENABLE);
+    }
+
+    /* Test on EV7 and clear it */
+    if(I2C_CheckEvent(I2C1, I2C_EVENT_MASTER_BYTE_RECEIVED))
+    {
+      /* Read a byte from the MPU6050 */
+      Rece_Data[j] = I2C_ReceiveData(I2C1);
+
+      /* Point to the next location where the byte read will be saved */
+      j++;
+
+      /* Decrement the read bytes counter */
+      i--;
+    }
+  }
+  /* Enable Acknowledgement to be ready for another reception */
+  I2C_AcknowledgeConfig(I2C1, ENABLE);
 	OS_EXIT_CRITICAL();	
 	return Rece_Data;
 	

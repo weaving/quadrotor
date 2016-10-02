@@ -121,24 +121,24 @@ void Flash_ReadPID(void)
 //	u32 read_data[36];
 //	STMFLASH_Read(SECTION_ADDR_PID,(u32*)read_data,36);
 
-	RollRate.Kp=0.05;
+	RollRate.Kp=0.04;
 	RollRate.Ki=0;
-	RollRate.Kd=1.0;
+	RollRate.Kd=0.8;
 	
-	PitchRate.Kp=0.05;
+	PitchRate.Kp=0.04;
 	PitchRate.Ki=0;
-	PitchRate.Kd=1;
+	PitchRate.Kd=0.8;
 	
 
-	YawRate.Kp=0.05;
+	YawRate.Kp=0.02;
 	YawRate.Ki=0;
 	YawRate.Kd=0;
 	
-	Stabilize_Roll.Kp=80;
+	Stabilize_Roll.Kp=70;
 	Stabilize_Roll.Ki=0;
 	Stabilize_Roll.Kd=0;
 	
-	Stabilize_Pitch.Kp=80;
+	Stabilize_Pitch.Kp=70;
 	Stabilize_Pitch.Ki=0;
 	Stabilize_Pitch.Kd=0;
 

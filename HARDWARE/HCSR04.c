@@ -227,6 +227,6 @@ void HCSR04_Get_Distance(int time)
 	/* ready for the next cal */
 	last_time = now_time;
 	last_HCSR04_Distance = HCSR04_Distance;
-	
+	UserData[0] = HCSR04_Distance;
 	if (HCSR04_Distance>400) HCSR04_Error = 1;   //³¬³öÁ¿³Ì
 }

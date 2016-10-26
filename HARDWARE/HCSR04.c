@@ -9,10 +9,11 @@
 #include "arm_math.h"
 #include "timer.h"
 #define AVG_NUM 5
+#define HCSR04_Buf_Size 5
 #define Distance_Offset 12.1f
 float old_HCSR04_Distance,V;
 float HCSR04_Distance,HCSR04_Distance_Last;
-float Dis_buffer[AVG_NUM];
+float HCSR04_FIFO[HCSR04_Buf_Size];
 uint8_t HCSR04_valid,HCSR04_RunFlag = 1,HCSR04_Error = 1,HCSR04_OK = 0,Dis_index = 0,HCSR04_Update = 0;
 
 OS_EVENT * Sem_Task_HCSR04_START;
@@ -182,8 +183,10 @@ void HCSR04_Get_Distance(int time)
 {
 	float Distance,Sound_Speed,x,y,z,IMU_SPEED_Z_tmp,IMU_SPEED_Z_sum;
 	static uint32_t last_time=0, now_time=0; // 采样周期计数 单位 us
-	static float speed_Z[5],last_HCSR04_Distance=0;
-	uint8_t i=0;
+	static float last_HCSR04_Distance=0,AVG_ALT;
+	static int speed_Z[6];
+	static int HCSR04_Buf_index=0;
+	uint32_t i=0,sum;
 	//计算在当前温度下 对应的空气中声音的传播速度
 	/*
 	音速与介质的密度和弹性性质有关，因此也随介质的温度、
@@ -193,15 +196,20 @@ void HCSR04_Get_Distance(int time)
 	*/
 	Sound_Speed = 340.0f;//(332.0f+ (MS5611_Temperature/100.0f)*0.607f);
 	Distance=(float)time/20000*Sound_Speed; //单位厘米
+	UserData[3] = Distance;
+
 	//通过空间三维坐标变换 求出铅直高度
 	x=arm_sin_f32(-Pitch);
 	y=-arm_sin_f32(-Roll)*arm_cos_f32(-Pitch);
 	z=arm_cos_f32(-Roll)*arm_cos_f32(-Pitch);
 	Distance*=z/sqrt(x*x+y*y+z*z);
 
+	
 	//HCSR04_NewDis(Distance);
 	//HCSR04_Distance=HCSR04_GetAvg(Dis_buffer,AVG_NUM);
-	if(HCSR04_Distance == 0) HCSR04_Distance_Last = Distance_KalmanFilter(Distance,0.004,0.04,0);
+
+	
+	if(HCSR04_Distance == 0) last_HCSR04_Distance = Distance_KalmanFilter(Distance,0.004,0.04,0);
 	
 		now_time = micros();  //读取时间这里用到定时器7 
 	if(now_time < last_time)
@@ -209,12 +217,23 @@ void HCSR04_Get_Distance(int time)
 		last_time = now_time;
 		return;
 	}	
-	
+	 
+	//卡尔曼滤波后取平均 FIFO为5 
 	HCSR04_Distance = Distance_KalmanFilter(Distance,0.004,0.04,0);
+	HCSR04_FIFO[HCSR04_Buf_index] = HCSR04_Distance;
+	HCSR04_Buf_index = (HCSR04_Buf_index + 1) % HCSR04_Buf_Size;
+	sum=0;
+	for(i=0;i<HCSR04_Buf_Size;i++)
+	{	//取数组内的值进行求和再取平均
+   		sum+=HCSR04_FIFO[i];
+	}
+	AVG_ALT=sum/HCSR04_Buf_Size;	//将平均值更新	
+	
+	
 	IMU_SPEED_Z_tmp = (HCSR04_Distance-last_HCSR04_Distance)/(now_time-last_time)*1000000.0f;
 	/* cal speed_Z */
 	/* sum speed_Z 10 times */
-  for(i=0;i<sizeof(speed_Z)/sizeof(float);i++)
+  for(i=0;i<sizeof(speed_Z)/sizeof(float)-1;i++)
 	  speed_Z[i]=speed_Z[i+1];
 	speed_Z[i] = 	IMU_SPEED_Z_tmp;
 	
@@ -227,6 +246,11 @@ void HCSR04_Get_Distance(int time)
 	/* ready for the next cal */
 	last_time = now_time;
 	last_HCSR04_Distance = HCSR04_Distance;
-	UserData[0] = HCSR04_Distance;
 	if (HCSR04_Distance>400) HCSR04_Error = 1;   //超出量程
+	
+
+
+
+	
+	
 }

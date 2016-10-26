@@ -27,17 +27,22 @@ void WFT_CheckLock(void)
 {
 	static u8 wft_state=0;
 	
-			if (Pwm_In[6]<1200 ) 
-			{
-				Lock_dataTransfer = 1;
-			}
-			else if (Pwm_In[6]<1600 ) 
-			{	
-				Lock_dataTransfer = 0;
-				Auto_Fixed_High = 0;
-			} 
-			else 
-				Auto_Fixed_High = 1;
+		if (Pwm_In[5]<1200 ) 
+		{
+			Auto_Fixed_High = 1;
+		}
+		else	Auto_Fixed_High = 0;
+		
+		if (Pwm_In[6]<1200 ) 
+		{
+			Lock_dataTransfer = 1;
+		}
+		else if (Pwm_In[6]<1600 ) 
+		{	
+			Lock_dataTransfer = 0;
+		} 
+		else ;
+//				Auto_Fixed_High = 1;
 				
 	switch(wft_state)
 	{

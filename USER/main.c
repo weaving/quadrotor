@@ -26,6 +26,8 @@
 #include "wft_controller.h"
 #include "pid.h"
 #include "OpticalFlow.h"
+#include "iwdg.h"
+
 // STM32F407开发板 UCOS实验1
 //UCOSII 移植
 //STM32F4工程 
@@ -75,7 +77,7 @@ void hmc5883_task(void *pdata);
 //设置任务优先级
 #define HCSR04_TASK_PRIO			6
 //设置任务堆栈大小
-#define HCSR04_STK_SIZE				64*2
+#define HCSR04_STK_SIZE				64*3
 //任务堆栈
 OS_STK HCSR04_TASK_STK[HCSR04_STK_SIZE];
 //任务函数
@@ -157,6 +159,9 @@ extern u8 ov_sta;	//在exit.c里 面定义
 extern OS_EVENT * Sem_Task_HCSR04_START;
 extern OS_EVENT * Sem_Task_HCSR04_STOP;
 extern uint16_t hcsr04_time;
+#define IWDOG_ENABLE 0
+#define NRF24L01_ENABLE 0
+#define HMC5883_ENABLE 0
 int main(void)
 {
 #if SUPPORT_OV7670==1
@@ -183,14 +188,21 @@ int main(void)
  	OV7670_Special_Effects(effect);	
 	OV7670_Window_Set(12,174,240,320);
 #endif
-	OpticalFlow_init();
+//	OpticalFlow_init();
 	MPU6050_Init();
+#if HMC5883_ENABLE ==1
 	HMC5883_Init();
-//	NRF24L01_Init();
+#endif
+#if NRF24L01_ENABLE == 1
+	NRF24L01_Init();
+#endif
 	Control_Init();
 //	HCSR04_Init();
 	TIM7_Int_Init(0xFFFF,83);//1Mhz的计数频率,1us时间度量	
-  GPIO_ResetBits(GPIOA,GPIO_Pin_6 );//灯亮表示程序初始化没问题
+#if IWDOG_ENABLE == 1
+  IWDG_Init(4,500);//与分频数为64,重载值为500,溢出时间为1s	
+#endif 
+ GPIO_ResetBits(GPIOA,GPIO_Pin_6 );//灯亮表示程序初始化没问题
 	
 	OSInit();  //UCOS初始化
 	OSTaskCreate(start_task,(void*)0,(OS_STK*)&START_TASK_STK[START_STK_SIZE-1],START_TASK_PRIO); //创建开始任务
@@ -208,17 +220,21 @@ void start_task(void *pdata)
 	
 	OS_ENTER_CRITICAL();  //进入临界区(关闭中断)
 	OSTaskCreate(mpu6050_task,(void*)0,(OS_STK*)&MPU6050_TASK_STK[MPU6050_STK_SIZE-1],MPU6050_TASK_PRIO);//创建MPU6050任务
-//	OSTaskCreate(hmc5883_task,(void*)0,(OS_STK*)&HMC5883_TASK_STK[HMC5883_STK_SIZE-1],HMC5883_TASK_PRIO);//创建HMC5883任务
+#if HMC5883_ENABLE ==1
+	OSTaskCreate(hmc5883_task,(void*)0,(OS_STK*)&HMC5883_TASK_STK[HMC5883_STK_SIZE-1],HMC5883_TASK_PRIO);//创建HMC5883任务
+#endif
 
-//	OSTaskCreate(led0_task,(void*)0,(OS_STK*)&LED0_TASK_STK[LED0_STK_SIZE-1],LED0_TASK_PRIO);//创建LED0任务
+	OSTaskCreate(led0_task,(void*)0,(OS_STK*)&LED0_TASK_STK[LED0_STK_SIZE-1],LED0_TASK_PRIO);//创建LED0任务
 //	OSTaskCreate(led1_task,(void*)0,(OS_STK*)&LED1_TASK_STK[LED1_STK_SIZE-1],LED1_TASK_PRIO);//创建LED1任务
 //	OSTaskCreate(float_task,(void*)0,(OS_STK*)&FLOAT_TASK_STK[FLOAT_STK_SIZE-1],FLOAT_TASK_PRIO);//创建浮点测试任务
 //	OSTaskCreate(hcsr04_task,(void*)0,(OS_STK*)&HCSR04_TASK_STK[HCSR04_STK_SIZE-1],HCSR04_TASK_PRIO);//创建HCSR04任务
-	OSTaskCreate(OpticalFlow_task,(void*)0,(OS_STK*)&OpticalFlow_TASK_STK[OpticalFlow_STK_SIZE-1],OpticalFlow_TASK_PRIO);//创建WFT07任务
+//	OSTaskCreate(OpticalFlow_task,(void*)0,(OS_STK*)&OpticalFlow_TASK_STK[OpticalFlow_STK_SIZE-1],OpticalFlow_TASK_PRIO);//创建WFT07任务
 	
 	OSTaskCreate(wft_task,(void*)0,(OS_STK*)&WFT_TASK_STK[WFT_STK_SIZE-1],WFT_TASK_PRIO);//创建WFT07任务
-
-//	OSTaskCreate(nrf_task,(void*)0,(OS_STK*)&NRF_TASK_STK[NRF_STK_SIZE-1],NRF_TASK_PRIO);//创建NRF任务
+#if NRF24L01_ENABLE ==1
+	OSTaskCreate(nrf_task,(void*)0,(OS_STK*)&NRF_TASK_STK[NRF_STK_SIZE-1],NRF_TASK_PRIO);//创建NRF任务
+#endif
+	
 #if SUPPORT_OV7670==1
 		OSTaskCreate(ov7670_task,(void*)0,(OS_STK*)&OV7670_TASK_STK[OV7670_STK_SIZE-1],OV7670_TASK_PRIO);//创建NRF任务
 #endif
@@ -249,6 +265,9 @@ void mpu6050_task(void *pdata)
 			{
 				Get_Attitude();
 				Fly_Control();
+#if IWDOG_ENABLE==1
+				IWDG_Feed();//喂狗
+#endif
 				ms1=0;
 			}
 			delay_ms(3);
@@ -341,12 +360,13 @@ void nrf_task(void *pdata)
 	NRF24L01_RX_Mode();		
 	while(1)
 	{
-//	Send_Data();
+//		UserData[0]=OSCPUUsage;
+	Send_Data();
 
 	
-	UserData[8] = RCTarget.Throttle;
 
-		Data_Send_UserData();
+
+//		Data_Send_UserData();
 
 //	Data_Send_UserData();
 //  Data_Send_Senser();

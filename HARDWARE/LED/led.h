@@ -9,8 +9,8 @@
 
 
 //LED端口定义
-#define LED0 PFout(9)	// D2
-#define LED1 PFout(10)	// D3	 
+#define LED0 PAout(6)	// D2
+#define LED1 PAout(7)	// D3	 
 
 void LED_Init(void);//初始化		 				    
 #endif

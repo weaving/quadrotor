@@ -168,12 +168,12 @@ void StableMode_Control(void)	 //遥控器自稳模式
 		THROTTLE=RCTarget.Throttle;
 		Fixed_High = HCSR04_Distance;
 	}
-	//}
-//	if(THROTTLE<1200)	 //低油门不启用YAW控制，所有PID积分清零
-//	{
-//		pidReset_all();  
-//		Target_Yaw =  Q_ANGLE.Z;
-//	}
+	
+	if(THROTTLE<1200)	 //低油门不启用YAW控制，所有PID积分清零
+	{
+		pidReset_all();  
+		Target_Yaw =  Q_ANGLE.Z;
+	}
 	if((RCTarget.Yaw > 2 || RCTarget.Yaw < -2) )	 
 	{
 		Target_Yaw =  Q_ANGLE.Z;

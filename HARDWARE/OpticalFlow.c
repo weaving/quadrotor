@@ -9,6 +9,7 @@
 
 void OpticalFlow_init(void)
 {
+	delay_ms(7000);
 	I2C1_Configuration();
 }
 

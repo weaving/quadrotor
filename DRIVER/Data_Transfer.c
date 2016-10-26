@@ -103,21 +103,21 @@ void Data_Receive_Anl(u8 *data_buf,u8 num)
 	}
 	if(*(data_buf+2)==0X10)								//PID1
 	{
-			RollRate.Kp = (float)((vs16)(*(data_buf+4)<<8)|*(data_buf+5))/1000;
+			RollRate.Kp = (float)((vs16)(*(data_buf+4)<<8)|*(data_buf+5))/100;
 			RollRate.Ki = (float)((vs16)(*(data_buf+6)<<8)|*(data_buf+7))/1000;
 			RollRate.Kd = (float)((vs16)(*(data_buf+8)<<8)|*(data_buf+9))/100;
 
 			PitchRate.Kp = RollRate.Kp;
 			PitchRate.Ki = RollRate.Ki;
 			PitchRate.Kd = RollRate.Kd;
-			Stabilize_Roll.Kp = (float)((vs16)(*(data_buf+10)<<8)|*(data_buf+11))/10;
+			Stabilize_Roll.Kp = (float)((vs16)(*(data_buf+10)<<8)|*(data_buf+11))/100;
 			Stabilize_Roll.Ki = (float)((vs16)(*(data_buf+12)<<8)|*(data_buf+13))/1000;
-			Stabilize_Roll.Kd = (float)((vs16)(*(data_buf+14)<<8)|*(data_buf+15))/10;
+			Stabilize_Roll.Kd = (float)((vs16)(*(data_buf+14)<<8)|*(data_buf+15))/100;
 			Stabilize_Pitch.Kp = Stabilize_Roll.Kp;
 			Stabilize_Pitch.Ki = Stabilize_Roll.Ki;
 			Stabilize_Pitch.Kd = Stabilize_Roll.Kd;
 		
-			Position_Hold.Kp = (float)((vs16)(*(data_buf+16)<<8)|*(data_buf+17))/1000;
+			Position_Hold.Kp = (float)((vs16)(*(data_buf+16)<<8)|*(data_buf+17))/100;
 			Position_Hold.Ki = (float)((vs16)(*(data_buf+18)<<8)|*(data_buf+19))/1000;
 			Position_Hold.Kd = (float)((vs16)(*(data_buf+20)<<8)|*(data_buf+21))/100;
 		/*
@@ -125,8 +125,8 @@ void Data_Receive_Anl(u8 *data_buf,u8 num)
 			Stabilize_Yaw.Ki = (float)((vs16)(*(data_buf+18)<<8)|*(data_buf+19))/1000;
 			Stabilize_Yaw.Kd = (float)((vs16)(*(data_buf+20)<<8)|*(data_buf+21))/10;
 			*/
-			YawRate.Kp = (float)((vs16)(*(data_buf+16)<<8)|*(data_buf+17))/1000;
-			YawRate.Ki = (float)((vs16)(*(data_buf+18)<<8)|*(data_buf+19))/100;
+			YawRate.Kp = (float)((vs16)(*(data_buf+16)<<8)|*(data_buf+17))/100;
+			YawRate.Ki = (float)((vs16)(*(data_buf+18)<<8)|*(data_buf+19))/1000;
 			YawRate.Kd = (float)((vs16)(*(data_buf+20)<<8)|*(data_buf+21))/100;
 			
 			Send_PID1 = 1;
@@ -137,10 +137,10 @@ void Data_Receive_Anl(u8 *data_buf,u8 num)
 	if(*(data_buf+2)==0X11)								//PID2
 	{
 			AutoHigh_THR.Kp = (float)((vs16)(*(data_buf+4)<<8)|*(data_buf+5))/100;
-			AutoHigh_THR.Ki = (float)((vs16)(*(data_buf+6)<<8)|*(data_buf+7))/10000;
-			AutoHigh_THR.Kd = (float)((vs16)(*(data_buf+8)<<8)|*(data_buf+9))/10;
+			AutoHigh_THR.Ki = (float)((vs16)(*(data_buf+6)<<8)|*(data_buf+7))/1000;
+			AutoHigh_THR.Kd = (float)((vs16)(*(data_buf+8)<<8)|*(data_buf+9))/100;
 
-			Position_Speed.Kp = (float)((vs16)(*(data_buf+10)<<8)|*(data_buf+11))/1000;
+			Position_Speed.Kp = (float)((vs16)(*(data_buf+10)<<8)|*(data_buf+11))/100;
 			Position_Speed.Ki = (float)((vs16)(*(data_buf+12)<<8)|*(data_buf+13))/1000;
 			Position_Speed.Kd = (float)((vs16)(*(data_buf+14)<<8)|*(data_buf+15))/100;
 			/*
@@ -160,8 +160,8 @@ void Data_Receive_Anl(u8 *data_buf,u8 num)
 	if(*(data_buf+2)==0X12)								//PID3
 	{
 			Climb.Kp = (float)((vs16)(*(data_buf+4)<<8)|*(data_buf+5))/100;
-			Climb.Ki = (float)((vs16)(*(data_buf+6)<<8)|*(data_buf+7))/100;
-			Climb.Kd = (float)((vs16)(*(data_buf+8)<<8)|*(data_buf+9))/10;
+			Climb.Ki = (float)((vs16)(*(data_buf+6)<<8)|*(data_buf+7))/1000;
+			Climb.Kd = (float)((vs16)(*(data_buf+8)<<8)|*(data_buf+9))/100;
 			Send_PID3 = 1;
 			Data_Send_Check(sum);
 //			for(i=0;i<100;i++) Respond_PID3();

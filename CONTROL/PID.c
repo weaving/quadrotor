@@ -65,7 +65,7 @@ float pidUpdate(struct Quad_PID* pid, float measured,float dt)//¶ÔÄ£ÄâPIDµÄËã·¨±
     pid->Integrator = -pid->iLimit;
   }
 
-  temp = (pid->merror - pid->last_error);//Õâ¸öÊÇÎ¢·ÖÁ¿=ÕâÒ»´Î-ÉÏÒ»´Î¡
+  temp = (pid->merror - pid->last_error);//Õâ¸öÊÇÎ¢·ÖÁ¿=ÕâÒ»´Î-ÉÏÒ»´Î?
 	
 	
   pid->deriv = pid->deriv + (temp - pid->deriv) * (dt / ( 7.9577e-3f + dt));//Õâ¸ö¿ÉÒÔ²»Òª°Ñ£¿
@@ -202,20 +202,18 @@ void Roll_Pitch_Yaw_AnglePID(float Angle_roll,float Angle_pitch,float Angle_yaw,
 
 	//ROLL
 	pidSetTarget(&Stabilize_Roll, Angle_roll);	 //Ä¿±ê½Ç¶È 40
-	/**/
 	RateTarget = pidUpdate(&Stabilize_Roll ,IMU_Roll , PID_dt);
 	pidSetTarget(&RollRate, RateTarget);
-//	/**/
 	pidUpdate(&RollRate ,IMU_GYROx , PID_dt);
-
 	RollRate.PID_out = Math_fConstrain(RollRate.PID_out,-300.0f,+300.0f);  //ÏÞÖÆ¿ØÖÆPWMÐÅºÅµÄ·ù¶È
 
-//PITCH
+	//PITCH
 	pidSetTarget(&Stabilize_Pitch, Angle_pitch);// Ä¿±ê½Ç¶È 40
 	RateTarget = -pidUpdate(&Stabilize_Pitch ,IMU_Pitch , PID_dt);
 	pidSetTarget(&PitchRate, RateTarget);
 	pidUpdate(&PitchRate ,IMU_GYROy , PID_dt);
 	PitchRate.PID_out = Math_fConstrain(PitchRate.PID_out,-300.0f,+300.0f);  //ÏÞÖÆ¿ØÖÆPWMÐÅºÅµÄ·ù¶È
+	
 	//YAW
 	pidSetTarget(&Stabilize_Yaw, Angle_yaw);
 	RateTarget = pidUpdate(&Stabilize_Yaw ,IMU_Yaw , PID_dt) + Rate_yaw;//Æ«º½½ÇµÄºÍroll pitchÓÐµã²î±ð
@@ -255,9 +253,15 @@ int16_t Auto_High_PID(float Target,uint8_t isRate)
 		HCSR04_Update = 0;
 	}	
 	ClimbTarget = Math_fConstrain(ClimbTarget,-50.0f,+50.0f); 
+
+	UserData[0] = ClimbTarget;
 	
 	pidSetTarget(&Climb, ClimbTarget);
 	pidUpdate(&Climb ,IMU_SPEED_Z ,ALT_Update_Interval);
+	
+	UserData[1] = IMU_SPEED_Z;
+	UserData[2] = Climb.PID_out;
+	
 	Climb.PID_out = Math_fConstrain(Climb.PID_out,-300.0f,+300.0f);
 	Climb.PID_out = Climb_last_out + Math_fConstrain((Climb.PID_out - Climb_last_out),-5,+5);
 	Climb_last_out = Climb.PID_out; 

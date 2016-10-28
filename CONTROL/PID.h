@@ -37,10 +37,13 @@ extern struct Quad_PID
 				;
 extern float PID_dt,Climb_last_out;
 extern float GPS_ROLL,GPS_PITCH;
+extern float Stabilize_Roll_Kp_Base;
 
 void pidInit(struct Quad_PID* pid, const float kp,
              const float ki, const float kd);
 float pidUpdate(struct Quad_PID* pid, float measured,float dt);
+
+
 float pidUpdate_Yaw(struct Quad_PID* pid, float dt);
 void pidSetIntegralLimit(struct Quad_PID* pid, float limit);
 void pidSetError(struct Quad_PID* pid, float err);

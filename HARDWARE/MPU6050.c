@@ -104,7 +104,7 @@ void MPU6050_Dataanl(void)
 void MPU6050_Init()
 {
 	I2C_Configuration();
-	delay_ms(1000);
+	delay_ms(100);
 	I2C_ByteWrite(MPU6050_I2C_Addr,PWR_MGMT_1,0X80);
 	delay_ms(10);
 	I2C_ByteWrite(MPU6050_I2C_Addr,PWR_MGMT_1,0X00);

@@ -159,9 +159,10 @@ extern u8 ov_sta;	//在exit.c里 面定义
 extern OS_EVENT * Sem_Task_HCSR04_START;
 extern OS_EVENT * Sem_Task_HCSR04_STOP;
 extern uint16_t hcsr04_time;
-#define IWDOG_ENABLE 0
-#define NRF24L01_ENABLE 0
-#define HMC5883_ENABLE 0
+#define IWDOG_ENABLE 1
+#define NRF24L01_ENABLE 1
+#define HMC5883_ENABLE 1
+#define HCSR04_ENABLE 1
 int main(void)
 {
 #if SUPPORT_OV7670==1
@@ -189,21 +190,28 @@ int main(void)
 	OV7670_Window_Set(12,174,240,320);
 #endif
 //	OpticalFlow_init();
-	MPU6050_Init();
-#if HMC5883_ENABLE ==1
-	HMC5883_Init();
-#endif
+
+
 #if NRF24L01_ENABLE == 1
 	NRF24L01_Init();
 #endif
+
 	Control_Init();
-//	HCSR04_Init();
+	
+#if HCSR04_ENABLE ==1
+	HCSR04_Init();
+#endif
+
 	TIM7_Int_Init(0xFFFF,83);//1Mhz的计数频率,1us时间度量	
 #if IWDOG_ENABLE == 1
   IWDG_Init(4,500);//与分频数为64,重载值为500,溢出时间为1s	
 #endif 
- GPIO_ResetBits(GPIOA,GPIO_Pin_6 );//灯亮表示程序初始化没问题
+	MPU6050_Init();
 	
+#if HMC5883_ENABLE ==1
+	 HMC5883_Init();
+#endif
+  GPIO_ResetBits(GPIOA,GPIO_Pin_6 );//灯亮表示程序初始化没问题
 	OSInit();  //UCOS初始化
 	OSTaskCreate(start_task,(void*)0,(OS_STK*)&START_TASK_STK[START_STK_SIZE-1],START_TASK_PRIO); //创建开始任务
 	OSStart(); //开始任务
@@ -224,11 +232,13 @@ void start_task(void *pdata)
 	OSTaskCreate(hmc5883_task,(void*)0,(OS_STK*)&HMC5883_TASK_STK[HMC5883_STK_SIZE-1],HMC5883_TASK_PRIO);//创建HMC5883任务
 #endif
 
-	OSTaskCreate(led0_task,(void*)0,(OS_STK*)&LED0_TASK_STK[LED0_STK_SIZE-1],LED0_TASK_PRIO);//创建LED0任务
+//	OSTaskCreate(led0_task,(void*)0,(OS_STK*)&LED0_TASK_STK[LED0_STK_SIZE-1],LED0_TASK_PRIO);//创建LED0任务
 //	OSTaskCreate(led1_task,(void*)0,(OS_STK*)&LED1_TASK_STK[LED1_STK_SIZE-1],LED1_TASK_PRIO);//创建LED1任务
 //	OSTaskCreate(float_task,(void*)0,(OS_STK*)&FLOAT_TASK_STK[FLOAT_STK_SIZE-1],FLOAT_TASK_PRIO);//创建浮点测试任务
-//	OSTaskCreate(hcsr04_task,(void*)0,(OS_STK*)&HCSR04_TASK_STK[HCSR04_STK_SIZE-1],HCSR04_TASK_PRIO);//创建HCSR04任务
-//	OSTaskCreate(OpticalFlow_task,(void*)0,(OS_STK*)&OpticalFlow_TASK_STK[OpticalFlow_STK_SIZE-1],OpticalFlow_TASK_PRIO);//创建WFT07任务
+#if HCSR04_ENABLE == 1
+	OSTaskCreate(hcsr04_task,(void*)0,(OS_STK*)&HCSR04_TASK_STK[HCSR04_STK_SIZE-1],HCSR04_TASK_PRIO);//创建HCSR04任务
+#endif
+	//	OSTaskCreate(OpticalFlow_task,(void*)0,(OS_STK*)&OpticalFlow_TASK_STK[OpticalFlow_STK_SIZE-1],OpticalFlow_TASK_PRIO);//创建WFT07任务
 	
 	OSTaskCreate(wft_task,(void*)0,(OS_STK*)&WFT_TASK_STK[WFT_STK_SIZE-1],WFT_TASK_PRIO);//创建WFT07任务
 #if NRF24L01_ENABLE ==1

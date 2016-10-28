@@ -185,7 +185,6 @@ void StableMode_Control(void)	 //遥控器自稳模式
 	}
 
 		 
-	
 	Roll_Pitch_Yaw_AnglePID(Target_Roll,Target_Pitch,Target_Yaw,Target_Yaw_Rate); 
 
 	PID_PITCH = PitchRate.PID_out;
@@ -242,7 +241,7 @@ void PWM_Write_Motors(void)
 
 
 		motor[0] = PIDMIX(+1,+1,-1);
-		motor[1] = PIDMIX(+1,-1,+1)-5; 
+		motor[1] = PIDMIX(+1,-1,+1)-7; 
 		motor[2] = PIDMIX(-1,-1,-1);//105是ROLL方向的  40是PITCH方向的
 		motor[3] = PIDMIX(-1,+1,+1);
 //		UserData[0] = motor[0];

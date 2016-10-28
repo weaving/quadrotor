@@ -103,7 +103,7 @@ void Data_Receive_Anl(u8 *data_buf,u8 num)
 	}
 	if(*(data_buf+2)==0X10)								//PID1
 	{
-			RollRate.Kp = (float)((vs16)(*(data_buf+4)<<8)|*(data_buf+5))/100;
+			RollRate.Kp = (float)((vs16)(*(data_buf+4)<<8)|*(data_buf+5))/1000;
 			RollRate.Ki = (float)((vs16)(*(data_buf+6)<<8)|*(data_buf+7))/1000;
 			RollRate.Kd = (float)((vs16)(*(data_buf+8)<<8)|*(data_buf+9))/100;
 

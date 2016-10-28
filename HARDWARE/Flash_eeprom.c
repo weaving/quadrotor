@@ -134,11 +134,12 @@ void Flash_ReadPID(void)
 	YawRate.Ki=0;
 	YawRate.Kd=0;
 	
-	Stabilize_Roll.Kp=70;
+	Stabilize_Roll_Kp_Base = 80;
+	Stabilize_Roll.Kp=80;
 	Stabilize_Roll.Ki=0;
 	Stabilize_Roll.Kd=0;
 	
-	Stabilize_Pitch.Kp=70;
+	Stabilize_Pitch.Kp=80;
 	Stabilize_Pitch.Ki=0;
 	Stabilize_Pitch.Kd=0;
 

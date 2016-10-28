@@ -33,6 +33,7 @@ struct Quad_PID
 				;
 uint16_t throttle=0;
 extern float old_HCSR04_Distance,V;
+float Stabilize_Roll_Kp_Base;
 void pidInit(struct Quad_PID* pid, float kp,
              float ki, float kd)
 {
@@ -55,6 +56,7 @@ float pidUpdate(struct Quad_PID* pid, float measured,float dt)//¶ÔÄ£ÄâPIDµÄËã·¨±
   pid->current = measured;
 
   pid->merror = pid->target - measured;
+		
   pid->Integrator += pid->Ki * pid->merror;
   if (pid->Integrator > pid->iLimit)//×ö»ý·ÖÏÞÖÆ
   {
@@ -66,8 +68,7 @@ float pidUpdate(struct Quad_PID* pid, float measured,float dt)//¶ÔÄ£ÄâPIDµÄËã·¨±
   }
 
   temp = (pid->merror - pid->last_error);//Õâ¸öÊÇÎ¢·ÖÁ¿=ÕâÒ»´Î-ÉÏÒ»´Î?
-	
-	
+
   pid->deriv = pid->deriv + (temp - pid->deriv) * (dt / ( 7.9577e-3f + dt));//Õâ¸ö¿ÉÒÔ²»Òª°Ñ£¿
   pid->outP = pid->Kp * pid->merror;
   pid->outI = pid->Integrator;
@@ -80,6 +81,8 @@ float pidUpdate(struct Quad_PID* pid, float measured,float dt)//¶ÔÄ£ÄâPIDµÄËã·¨±
 
   return output;
 }
+
+
 float pidUpdate_Yaw(struct Quad_PID* pid, float dt)
 {
   float output,temp;
@@ -200,6 +203,8 @@ void Roll_Pitch_Yaw_AnglePID(float Angle_roll,float Angle_pitch,float Angle_yaw,
 	IMU_Pitch = Q_ANGLE.Y;
 	IMU_Yaw = Q_ANGLE.Z;
 
+  if(Q_ANGLE.X>15 && Q_ANGLE.X<45 )  Stabilize_Roll.Kp= Stabilize_Roll_Kp_Base*(Q_ANGLE.X/30+0.5);
+	if(Q_ANGLE.X>45) Stabilize_Roll.Kp = Stabilize_Roll_Kp_Base*2;
 	//ROLL
 	pidSetTarget(&Stabilize_Roll, Angle_roll);	 //Ä¿±ê½Ç¶È 40
 	RateTarget = pidUpdate(&Stabilize_Roll ,IMU_Roll , PID_dt);
